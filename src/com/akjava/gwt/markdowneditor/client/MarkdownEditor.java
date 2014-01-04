@@ -25,6 +25,7 @@ public class MarkdownEditor extends HorizontalPanel {
 	private CheckBox autoConvertCheck;
 	private HTML previewHTML;
 	private TextArea htmlArea;
+	private ListBox titleLevelBox;
 
 	public MarkdownEditor(){
 		createLeftPanels();
@@ -85,7 +86,7 @@ public class MarkdownEditor extends HorizontalPanel {
 	private void createTextAreas(VerticalPanel parent) {
 		textArea = new TextArea();
 		parent.add(textArea);
-		textArea.setText("line1 abc\r\nline2 efg\ntest3");
+		//textArea.setText("line1 abc\r\nline2 efg\ntest3");
 		textArea.setStylePrimaryName("textbg");
 	  	textArea.setWidth("560px");
 	    textArea.setHeight("700px");
@@ -112,25 +113,30 @@ public class MarkdownEditor extends HorizontalPanel {
 		HorizontalPanel button1Panel=new HorizontalPanel();
 		panels.add(button1Panel);
 		
-		final ListBox titlebox=new ListBox();
-		titlebox.addItem("");
-		titlebox.addItem("Title 1");
-		titlebox.addItem("Title 2");
-		titlebox.addItem("Title 3");
-		titlebox.addItem("Title 4");
-		titlebox.addItem("Title 5");
-		titlebox.addItem("Title 6");
-		titlebox.addChangeHandler(new ChangeHandler() {
+		titleLevelBox = new ListBox();
+		titleLevelBox.addItem("Clear");
+		titleLevelBox.addItem("Title 1");
+		titleLevelBox.addItem("Title 2");
+		titleLevelBox.addItem("Title 3");
+		titleLevelBox.addItem("Title 4");
+		titleLevelBox.addItem("Title 5");
+		titleLevelBox.addItem("Title 6");
+		titleLevelBox.addItem("");
+		titleLevelBox.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				
-				titleSelected(titlebox.getSelectedIndex());
+				int index=titleLevelBox.getSelectedIndex();
+				LogUtils.log("selection-changed:"+index);
+				if(index>6){
+					index=0;
+				}
+				titleSelected(index);
 				
 				
 			}
 		});
-		titlebox.setSelectedIndex(0);
-		button1Panel.add(titlebox);
+		titleLevelBox.setSelectedIndex(0);
+		button1Panel.add(titleLevelBox);
 		
 	}
 	private void debug(String text){
@@ -171,6 +177,7 @@ public class MarkdownEditor extends HorizontalPanel {
 			}
 		}
 		onTextAreaUpdate();
+		titleLevelBox.setSelectedIndex(7);
 	}
 	
 	public Optional<TextSelection> getTextSelection(){
