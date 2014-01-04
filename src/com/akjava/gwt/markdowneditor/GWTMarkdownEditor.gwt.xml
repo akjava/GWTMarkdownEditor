@@ -18,7 +18,7 @@
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
 
   <!-- Other module inherits                                      -->
-<inherits name="com.akjava.lib.common.Common"/>
+<inherits name="com.akjava.gwt.common.Common"/>
 <inherits name="com.akjava.gwt.html5.Html5widget" />
   <!-- Specify the app entry point class.                         -->
   <entry-point class='com.akjava.gwt.markdowneditor.client.GWTMarkdownEditor'/>

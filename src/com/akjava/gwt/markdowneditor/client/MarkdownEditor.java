@@ -1,5 +1,11 @@
 package com.akjava.gwt.markdowneditor.client;
 
+import com.akjava.gwt.lib.client.LogUtils;
+import com.akjava.gwt.lib.client.TextSelection;
+import com.google.common.base.Optional;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -9,10 +15,10 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
-
 public class MarkdownEditor extends HorizontalPanel {
 
 	private TextArea textArea;
@@ -64,6 +70,7 @@ public class MarkdownEditor extends HorizontalPanel {
 		HorizontalPanel panel=new HorizontalPanel();
 		parent.add(panel);
 		autoConvertCheck = new CheckBox("auto");
+		autoConvertCheck.setValue(true);
 		panel.add(autoConvertCheck);
 		Button bt=new Button("Convert");
 		bt.addClickHandler(new ClickHandler() {
@@ -78,6 +85,7 @@ public class MarkdownEditor extends HorizontalPanel {
 	private void createTextAreas(VerticalPanel parent) {
 		textArea = new TextArea();
 		parent.add(textArea);
+		textArea.setText("line1 abc\r\nline2 efg\ntest3");
 		textArea.setStylePrimaryName("textbg");
 	  	textArea.setWidth("560px");
 	    textArea.setHeight("700px");
@@ -103,6 +111,70 @@ public class MarkdownEditor extends HorizontalPanel {
 		parent.add(panels);
 		HorizontalPanel button1Panel=new HorizontalPanel();
 		panels.add(button1Panel);
+		
+		final ListBox titlebox=new ListBox();
+		titlebox.addItem("");
+		titlebox.addItem("Title 1");
+		titlebox.addItem("Title 2");
+		titlebox.addItem("Title 3");
+		titlebox.addItem("Title 4");
+		titlebox.addItem("Title 5");
+		titlebox.addItem("Title 6");
+		titlebox.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				
+				titleSelected(titlebox.getSelectedIndex());
+				
+				
+			}
+		});
+		titlebox.setSelectedIndex(0);
+		button1Panel.add(titlebox);
+		
+	}
+	private void debug(String text){
+		for(int i=0;i<text.length();i++){
+			LogUtils.log(i+":"+text.charAt(i)+","+((int)text.charAt(i)));
+		}
+	}
+	
+	private void titleSelected(int level){
+		Optional<TextSelection> selection= getTextSelection();
+		
+		for(TextSelection textSelection:selection.asSet()){
+			LogUtils.log("select:"+textSelection.getSelection()+","+textSelection.getStart()+","+textSelection.getEnd());
+			TextSelection tmp1=textSelection.getCurrentLine();
+			LogUtils.log("current:"+tmp1.getSelection()+","+tmp1.getStart()+","+tmp1.getEnd());
+			TextSelection lineSelection=textSelection.getCurrentLine();
+			boolean startWithTitle=MarkdownPredicates.getStartWithTitleLinePredicate().apply(lineSelection.getSelection());
+			if(startWithTitle){
+				//can ignore next line
+				String newLine=MarkdownFunctions.getConvertTitle(level).apply(lineSelection.getSelection());
+				lineSelection.replace(newLine);
+			}else{
+				boolean nextLineIsTitle=false;
+				Optional<TextSelection> nextLine=lineSelection.getNextLine();
+				if(nextLine.isPresent()){
+					TextSelection tmp2=nextLine.get();
+					LogUtils.log("next:"+tmp2.getSelection()+","+tmp2.getStart()+","+tmp2.getEnd());
+					TextSelection nextLineSelection=nextLine.get();
+					nextLineIsTitle=MarkdownPredicates.getTitleLinePredicate().apply(nextLineSelection.getSelection());
+				}
+				String newLine=MarkdownFunctions.getConvertTitle(level).apply(lineSelection.getSelection());
+				if(nextLineIsTitle){
+					TextSelection bothSelection=new TextSelection(lineSelection.getStart(), nextLine.get().getEnd(), textArea);
+					bothSelection.replace(newLine);
+				}else{
+					lineSelection.replace(newLine);
+				}
+			}
+		}
+		onTextAreaUpdate();
+	}
+	
+	public Optional<TextSelection> getTextSelection(){
+		return TextSelection.createTextSelection(textArea);
 	}
 	
 	public void onTextAreaUpdate(){
