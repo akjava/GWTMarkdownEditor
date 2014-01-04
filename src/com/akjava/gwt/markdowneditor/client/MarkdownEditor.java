@@ -135,7 +135,7 @@ public class MarkdownEditor extends HorizontalPanel {
 				
 			}
 		});
-		titleLevelBox.setSelectedIndex(0);
+		titleLevelBox.setSelectedIndex(7);//default empty
 		button1Panel.add(titleLevelBox);
 		
 	}
