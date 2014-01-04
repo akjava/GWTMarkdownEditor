@@ -38,6 +38,6 @@ only support title control by ListBox
 
 Tested
 ------
-| OS| Browser| Version|
-| ------------- |:-------------:| -----:|
-| Windows7      | Chrome| 31 |
+| OS| Browser| Version|DATE|
+| ------------- |:-------------:| -----:|-----:|
+| Windows7      | Chrome| 31 |3 Jan 2013|
