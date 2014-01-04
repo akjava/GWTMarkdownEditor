@@ -5,9 +5,9 @@ GWTMarkdownEditor
 
 Inside
 ------
-right now it's using **markdown.js** inside.
+right now it's using **marked.js** inside.
 
->https://github.com/evilstreak/markdown-js
+>https://github.com/chjj/marked
 
 but you can change easily,native code just call marked
 
