@@ -11,7 +11,7 @@ right now it's using **markdown.js** inside.
 
 but you can change easily,native code just call marked
 
-<code>
+ ```
 package com.akjava.gwt.markdowneditor.client;
 
 public class Marked {
@@ -19,7 +19,7 @@ public class Marked {
 	return $wnd.marked(text);
 	}-*/;
 }
-</code>
+ ```
 
 
 Purpose
@@ -38,6 +38,6 @@ only support title control by ListBox
 
 Tested
 ------
-| OS            | Browser| Version|
+| OS| Browser| Version|
 | ------------- |:-------------:| -----:|
-| Windows7      | Chrome        | 31    |
+| Windows7      | Chrome| 31 |
