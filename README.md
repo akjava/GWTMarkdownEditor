@@ -1,6 +1,8 @@
 GWTMarkdownEditor
 =================
 
+
+
 Inside
 ------
 right now it's using **markdown.js** inside.
@@ -33,3 +35,9 @@ Apache 2.0
 Functions
 ----
 only support title control by ListBox
+
+Tested
+------
+| OS            | Browser| Version|
+| ------------- |:-------------:| -----:|
+| Windows7      | Chrome        | 31    |
