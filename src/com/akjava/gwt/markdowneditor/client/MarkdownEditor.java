@@ -4,6 +4,7 @@ import com.akjava.gwt.lib.client.LogUtils;
 import com.akjava.gwt.lib.client.StorageControler;
 import com.akjava.gwt.lib.client.StorageException;
 import com.akjava.gwt.lib.client.TextSelection;
+import com.akjava.gwt.lib.client.widget.TabInputableTextArea;
 import com.google.common.base.Optional;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -89,7 +90,7 @@ public class MarkdownEditor extends HorizontalPanel {
 	}
 
 	private void createTextAreas(VerticalPanel parent) {
-		textArea = new TextArea();
+		textArea = new TabInputableTextArea();
 		parent.add(textArea);
 		
 		textArea.setText(storageControler.getValue(KEY_MARKDOWNEDITOR, ""));

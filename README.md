@@ -1,7 +1,7 @@
 GWTMarkdownEditor
 =================
 
-
+this is markdown editor with GWT
 
 Inside
 ------
@@ -11,7 +11,7 @@ right now it's using **marked.js** inside.
 
 but you can change easily,native code just call marked
 
- ```
+```java
 package com.akjava.gwt.markdowneditor.client;
 
 public class Marked {
@@ -19,10 +19,10 @@ public class Marked {
 	return $wnd.marked(text);
 	}-*/;
 }
- ```
+```
 
 
-Purpose
+Goal
 -------
 add short-cut or ui to help write markdown more easily(I usually forget how to write it down)
 
