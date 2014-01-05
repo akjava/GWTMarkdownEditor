@@ -182,6 +182,32 @@ public class MarkdownEditor extends HorizontalPanel {
 				}
 		});
 		button1Panel.add(codeBt);
+		
+		Button blockBt=new Button("Block",new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
+					insertBetweenSelectionText(selection.getCurrentLine(),">","");	
+					onTextAreaUpdate();
+				}
+				}
+		});
+		blockBt.setTitle("Add a Blockquote");
+		button1Panel.add(blockBt);
+		
+		Button lineBt=new Button("Line",new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
+					insertBetweenSelectionText(selection.getCurrentLine(),"********\n","");	
+					onTextAreaUpdate();
+				}
+				}
+		});
+		lineBt.setTitle("Insert a Line");
+		button1Panel.add(lineBt);
 	}
 	private void debug(String text){
 		for(int i=0;i<text.length();i++){
