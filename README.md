@@ -3,8 +3,7 @@ GWTMarkdownEditor
 
 this is markdown editor with GWT
 
-Inside
-------
+###Inside
 right now it's using **marked.js** inside.
 
 >https://github.com/chjj/marked
@@ -22,28 +21,26 @@ public class Marked {
 ```
 
 
-Goal
--------
+###Goal
 add short-cut or ui to help write markdown more easily(I usually forget how to write it down)
 
 release as widget(i hope you can use it in your gwt-app)
 
-License
--------
+###License
+
 Apache 2.0
 
-Functions
-----
+###Functions
+
 only support title control by ListBox
 
-Tested
-------
+###Tested
+
 | OS| Browser| Version|Test Date|
 | ------------- |:-------------:| -----:|-----:|
 | Windows7-64bit      | Chrome| 31 |3 Jan 2013|
 
-TODO
-----
+###TODO
 store last modified
 add code,link,image
 support csv2table

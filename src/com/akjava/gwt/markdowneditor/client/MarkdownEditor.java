@@ -134,7 +134,7 @@ public class MarkdownEditor extends HorizontalPanel {
 			@Override
 			public void onChange(ChangeEvent event) {
 				int index=titleLevelBox.getSelectedIndex();
-				LogUtils.log("selection-changed:"+index);
+				
 				if(index>6){
 					index=0;
 				}
@@ -219,6 +219,8 @@ public class MarkdownEditor extends HorizontalPanel {
 					LogUtils.log("next:"+tmp2.getSelection()+","+tmp2.getStart()+","+tmp2.getEnd());
 					TextSelection nextLineSelection=nextLine.get();
 					nextLineIsTitle=MarkdownPredicates.getTitleLinePredicate().apply(nextLineSelection.getSelection());
+				}else{
+					LogUtils.log("no next-line");
 				}
 				String newLine=MarkdownFunctions.getConvertTitle(level).apply(lineSelection.getSelection());
 				if(nextLineIsTitle){
