@@ -11,6 +11,7 @@ import com.akjava.gwt.lib.client.TextSelection;
 import com.akjava.gwt.lib.client.widget.TabInputableTextArea;
 import com.akjava.lib.common.functions.HtmlFunctions.StringToPreFixAndSuffix;
 import com.akjava.lib.common.predicates.StringPredicates;
+import com.akjava.lib.common.utils.CSVUtils;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
@@ -175,6 +176,17 @@ public class MarkdownEditor extends HorizontalPanel {
 		});
 		button1Panel.add(ItalicBt);
 		
+		Button strikeBt=new Button("Strike",new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
+					insertBetweenSelectionText(selection,"~~","~~");	
+					onTextAreaUpdate();
+					}
+				}
+		});
+		button1Panel.add(strikeBt);
+		
 		Button codeBt=new Button("Code",new ClickHandler() {
 			
 			@Override
@@ -224,7 +236,11 @@ public class MarkdownEditor extends HorizontalPanel {
 				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
 					String selected=selection.getSelection();
 					String url=Window.prompt("put url", "http://");
+					if(url==null){//cancel
+						return;
+					}
 					String newText="["+selected+"]"+"("+url+")";
+					
 					selection.replace(newText);
 					onTextAreaUpdate();
 				}
@@ -254,6 +270,40 @@ public class MarkdownEditor extends HorizontalPanel {
 		});
 		ListBt.setTitle("Convert to List");
 		button1Panel.add(ListBt);
+		
+		Button tableBt=new Button("Table",new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
+					String selected=selection.getSelection();
+					List<List<String>> csvs=CSVUtils.csvToListList(selected, true, false);
+					
+					Joiner tableJoiner=Joiner.on("|");
+					List<String> converted=new ArrayList<String>();
+					for(int i=0;i<csvs.size();i++){
+						List<String> csv=csvs.get(i);
+							converted.add(tableJoiner.join(csv));
+						if(i==0){//header need line
+							List<String> lines=new ArrayList<String>();
+							for(int j=0;j<csv.size();j++){
+								lines.add("---");
+							}
+							converted.add(tableJoiner.join(lines));
+						}
+					}
+				
+					
+					selection.replace(Joiner.on("\n").join(converted));
+					
+					onTextAreaUpdate();
+				}
+				}
+		});
+		tableBt.setTitle("Convert to table");
+		button1Panel.add(tableBt);
+		
+		
 	}
 	private void debug(String text){
 		for(int i=0;i<text.length();i++){

@@ -8,7 +8,7 @@ right now it's using **marked.js** inside.
 
 >https://github.com/chjj/marked
 
-but you can change easily,native code just call marked
+but you can  use another markup script easily,native code just call marked.change this line.
 
 ```java
 package com.akjava.gwt.markdowneditor.client;
@@ -33,13 +33,13 @@ Apache 2.0
 ###Functions
 **Key**
 - Title(choosed by pull-down menu)
-- Bold/Italic(select text and click button)
+- Bold/Italic/Strike(select text and click button)
 - Code(select text and click button)
 - Blockquote(click button)
 - Line(click button)
 - URL(select and click button and set url)
 - List(selection lines and click)
-
+- Table(selection tabbed-csv-lines and click)
 **Others**
 store last converted in local-storage
 ###Tested
