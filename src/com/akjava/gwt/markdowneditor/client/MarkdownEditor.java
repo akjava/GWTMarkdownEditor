@@ -12,8 +12,10 @@ import com.akjava.gwt.lib.client.widget.TabInputableTextArea;
 import com.akjava.lib.common.functions.HtmlFunctions.StringToPreFixAndSuffix;
 import com.akjava.lib.common.predicates.StringPredicates;
 import com.akjava.lib.common.utils.CSVUtils;
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -303,8 +305,51 @@ public class MarkdownEditor extends HorizontalPanel {
 		tableBt.setTitle("Convert to table");
 		button1Panel.add(tableBt);
 		
+		Button t2tableBt=new Button("Tab2Title",new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
+					String selected=selection.getSelection();
+					
+					List<String> converted=FluentIterable
+							.from(Arrays.asList(selected.split("\n")))
+							
+							.transform(new TabTitleFunction())
+							.toList();
+							
+							selection.replace(Joiner.on("\n").join(converted));
+					
+					onTextAreaUpdate();
+				}
+				}
+		});
+		tableBt.setTitle("Convert to tab tree to title");
+		button1Panel.add(t2tableBt);
 		
 	}
+	
+	public static class TabTitleFunction implements Function<String,String>{
+		@Override
+		public String apply(String input) {
+			if(input.isEmpty()){
+				return "";
+			}
+			String text="";
+			int level=1;//all text add level
+			for(int i=0;i<input.length();i++){
+				if(input.charAt(i)=='\t'){
+					level++;
+				}else{
+					text=input.substring(i);
+					break;
+				}
+			}
+			level=Math.min(level, 6);
+			return Strings.repeat("#", level)+text;
+		}
+	}
+	
 	private void debug(String text){
 		for(int i=0;i<text.length();i++){
 			LogUtils.log(i+":"+text.charAt(i)+","+((int)text.charAt(i)));
