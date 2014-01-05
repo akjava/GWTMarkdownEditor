@@ -32,12 +32,13 @@ Apache 2.0
 
 ###Functions
 **Key**
-- Title(choosed by pull-down menu)
+- Title(choosed by pull-down menu or tab-tree)
 - Bold/Italic/Strike(select text and click button)
 - Code(select text and click button)
 - Blockquote(click button)
 - Line(click button)
 - URL(select and click button and set url)
+- Image(select and click button and set url)
 - List(selection lines and click)
 - Table(selection tabbed-csv-lines and click)
 **Others**
@@ -48,8 +49,7 @@ store last converted in local-storage
 | Windows7-64bit      | Chrome| 31 |5 Jan 2013|
 
 ###TODO
-
-support image,csv2table,csv2list,csv2titles
+support Youtube
 ********
 ###Credits
 [Aki Miyazaki](https://plus.google.com/103021856782435660635/) 2013

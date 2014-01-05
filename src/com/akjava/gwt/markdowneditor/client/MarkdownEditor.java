@@ -11,7 +11,9 @@ import com.akjava.gwt.lib.client.TextSelection;
 import com.akjava.gwt.lib.client.widget.TabInputableTextArea;
 import com.akjava.lib.common.functions.HtmlFunctions.StringToPreFixAndSuffix;
 import com.akjava.lib.common.predicates.StringPredicates;
+import com.akjava.lib.common.tag.Tag;
 import com.akjava.lib.common.utils.CSVUtils;
+import com.akjava.lib.common.utils.ValuesUtils;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
@@ -43,6 +45,7 @@ public class MarkdownEditor extends HorizontalPanel {
 	private ListBox titleLevelBox;
 
 	private StorageControler storageControler=new StorageControler(false);
+	private ListBox imageListBox;
 	
 	public MarkdownEditor(){
 		createLeftPanels();
@@ -52,6 +55,8 @@ public class MarkdownEditor extends HorizontalPanel {
 	private void createRightPanels() {
 		VerticalPanel rightPanel=new VerticalPanel();
 		this.add(rightPanel);
+		
+		createOptionArea(rightPanel);
 
 		TabPanel tab=new TabPanel();
 		rightPanel.add(tab);
@@ -81,15 +86,13 @@ public class MarkdownEditor extends HorizontalPanel {
 		this.add(leftPanel);
 		createToolbars(leftPanel);
 		createTextAreas(leftPanel);
-		createOptionArea(leftPanel);
+		
 	}
 
 	private void createOptionArea(VerticalPanel parent) {
 		HorizontalPanel panel=new HorizontalPanel();
 		parent.add(panel);
-		autoConvertCheck = new CheckBox("auto");
-		autoConvertCheck.setValue(true);
-		panel.add(autoConvertCheck);
+		
 		Button bt=new Button("Convert");
 		bt.addClickHandler(new ClickHandler() {
 			@Override
@@ -98,6 +101,10 @@ public class MarkdownEditor extends HorizontalPanel {
 			}
 		});
 		panel.add(bt);
+		
+		autoConvertCheck = new CheckBox("auto");
+		autoConvertCheck.setValue(true);
+		panel.add(autoConvertCheck);
 	}
 
 	private void createTextAreas(VerticalPanel parent) {
@@ -132,15 +139,18 @@ public class MarkdownEditor extends HorizontalPanel {
 		HorizontalPanel button1Panel=new HorizontalPanel();
 		panels.add(button1Panel);
 		
+		HorizontalPanel button2Panel=new HorizontalPanel();
+		panels.add(button2Panel);
+		
 		titleLevelBox = new ListBox();
 		titleLevelBox.addItem("Clear");
-		titleLevelBox.addItem("Title 1");
-		titleLevelBox.addItem("Title 2");
-		titleLevelBox.addItem("Title 3");
-		titleLevelBox.addItem("Title 4");
-		titleLevelBox.addItem("Title 5");
-		titleLevelBox.addItem("Title 6");
-		titleLevelBox.addItem("");
+		titleLevelBox.addItem("Head 1");
+		titleLevelBox.addItem("Head 2");
+		titleLevelBox.addItem("Head 3");
+		titleLevelBox.addItem("Head 4");
+		titleLevelBox.addItem("Head 5");
+		titleLevelBox.addItem("Head 6");
+		titleLevelBox.addItem("<HEAD>");
 		titleLevelBox.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -154,6 +164,7 @@ public class MarkdownEditor extends HorizontalPanel {
 				
 			}
 		});
+		titleLevelBox.setTitle("convert pointed line to title");
 		titleLevelBox.setSelectedIndex(7);//default empty
 		button1Panel.add(titleLevelBox);
 		
@@ -187,6 +198,7 @@ public class MarkdownEditor extends HorizontalPanel {
 					}
 				}
 		});
+		strikeBt.setTitle("insert strike");
 		button1Panel.add(strikeBt);
 		
 		Button codeBt=new Button("Code",new ClickHandler() {
@@ -203,6 +215,7 @@ public class MarkdownEditor extends HorizontalPanel {
 				}
 				}
 		});
+		codeBt.setTitle("insert code");
 		button1Panel.add(codeBt);
 		
 		Button blockBt=new Button("Block",new ClickHandler() {
@@ -237,7 +250,7 @@ public class MarkdownEditor extends HorizontalPanel {
 			public void onClick(ClickEvent event) {
 				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
 					String selected=selection.getSelection();
-					String url=Window.prompt("put url", "http://");
+					String url=Window.prompt("Link URL", "http://");
 					if(url==null){//cancel
 						return;
 					}
@@ -250,6 +263,25 @@ public class MarkdownEditor extends HorizontalPanel {
 		});
 		LinkBt.setTitle("Insert a URL");
 		button1Panel.add(LinkBt);
+		Button ImageBt=new Button("Image",new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
+					String selected=selection.getSelection();
+					String url=Window.prompt("Image URL", "");
+					if(url==null){//cancel
+						return;
+					}
+					String newText="!["+selected+"]"+"("+url+")";
+					
+					selection.replace(newText);
+					onTextAreaUpdate();
+				}
+				}
+		});
+		ImageBt.setTitle("Insert a Image");
+		button1Panel.add(ImageBt);
 		
 		Button ListBt=new Button("List",new ClickHandler() {
 			
@@ -273,7 +305,7 @@ public class MarkdownEditor extends HorizontalPanel {
 		ListBt.setTitle("Convert to List");
 		button1Panel.add(ListBt);
 		
-		Button tableBt=new Button("Table",new ClickHandler() {
+		Button tableBt=new Button("Tab2Table",new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
@@ -302,10 +334,10 @@ public class MarkdownEditor extends HorizontalPanel {
 				}
 				}
 		});
-		tableBt.setTitle("Convert to table");
-		button1Panel.add(tableBt);
+		tableBt.setTitle("Convert Tab to table");
+		button2Panel.add(tableBt);
 		
-		Button t2tableBt=new Button("Tab2Title",new ClickHandler() {
+		Button t2tableBt=new Button("Tab2Head",new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
@@ -324,11 +356,75 @@ public class MarkdownEditor extends HorizontalPanel {
 				}
 				}
 		});
-		tableBt.setTitle("Convert to tab tree to title");
-		button1Panel.add(t2tableBt);
+		t2tableBt.setTitle("Convert tab tree to Title");
+		button2Panel.add(t2tableBt);
+		
+		Button tab2listBt=new Button("Tab2List",new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
+					String selected=selection.getSelection();
+					
+					List<String> converted=FluentIterable
+					.from(Arrays.asList(selected.split("\n")))
+					
+					.transform(new TabListFunction())
+					.toList();
+					
+					selection.replace(Joiner.on("\n").join(converted));
+					
+					onTextAreaUpdate();
+				}
+				}
+		});
+		tab2listBt.setTitle("Convert tab tree to List");
+		button2Panel.add(tab2listBt);
+		
+		imageListBox = new ListBox();
+		imageListBox.addItem("");
+		imageListBox.addItem("16");
+		imageListBox.addItem("32");
+		imageListBox.addItem("50");
+		imageListBox.addItem("64");
+		imageListBox.addItem("100");
+		imageListBox.addItem("200");
+		imageListBox.addItem("400");
+		imageListBox.addItem("600");
+		imageListBox.addItem("800");
+		imageListBox.addItem("<img>");
+		imageListBox.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+			
+				int width=ValuesUtils.toInt(imageListBox.getItemText(imageListBox.getSelectedIndex()),0);
+				
+				imageSelected(width);
+				
+				
+			}
+		});
+		imageListBox.setTitle("insert <img> tag with width");
+		imageListBox.setSelectedIndex(imageListBox.getItemCount()-1);//default empty
+		button2Panel.add(imageListBox);
 		
 	}
 	
+	protected void imageSelected(int width) {
+		String url=Window.prompt("Image URL", "");
+		if(url==null){//cancel
+			return;
+		}
+		
+		Optional<TextSelection> selection= getTextSelection();
+		for(TextSelection textSelection:selection.asSet()){
+			Tag tag=new Tag("img").attr("src",url).attr("alt",textSelection.getSelection()).attr("width", ""+width).single();
+			textSelection.replace(tag.toString());
+		}
+		onTextAreaUpdate();
+		imageListBox.setSelectedIndex(imageListBox.getItemCount()-1);
+	}
+
 	public static class TabTitleFunction implements Function<String,String>{
 		@Override
 		public String apply(String input) {
@@ -347,6 +443,27 @@ public class MarkdownEditor extends HorizontalPanel {
 			}
 			level=Math.min(level, 6);
 			return Strings.repeat("#", level)+text;
+		}
+	}
+	
+	public static class TabListFunction implements Function<String,String>{
+		@Override
+		public String apply(String input) {
+			if(input.isEmpty()){
+				return "";
+			}
+			String text="";
+			int level=0;//all text add level
+			for(int i=0;i<input.length();i++){
+				if(input.charAt(i)=='\t'){
+					level++;
+				}else{
+					text=input.substring(i);
+					break;
+				}
+			}
+			//level=Math.min(level, 6);
+			return Strings.repeat("\t", level)+"- "+text;
 		}
 	}
 	
