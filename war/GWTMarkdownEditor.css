@@ -2,3 +2,10 @@
 	background: #ffffc8;
 }
 
+code{
+	background:#eee;
+}
+pre{
+	margin:4px;
+	background:#eee;
+}

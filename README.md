@@ -38,6 +38,14 @@ only support title control by ListBox
 
 Tested
 ------
-| OS| Browser| Version|DATE|
+| OS| Browser| Version|Test Date|
 | ------------- |:-------------:| -----:|-----:|
-| Windows7      | Chrome| 31 |3 Jan 2013|
+| Windows7-64bit      | Chrome| 31 |3 Jan 2013|
+
+TODO
+----
+store last modified
+add code,link,image
+support csv2table
+bold
+line

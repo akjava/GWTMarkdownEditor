@@ -138,12 +138,36 @@ public class MarkdownEditor extends HorizontalPanel {
 		titleLevelBox.setSelectedIndex(7);//default empty
 		button1Panel.add(titleLevelBox);
 		
+		Button codeBt=new Button("Code",new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
+					if(selection.containLineBreak()){
+						insertBetweenSelectionText(selection,"```\n","\n```");
+					}else{
+						insertBetweenSelectionText(selection,"`","`");	
+					}
+					onTextAreaUpdate();
+				}
+				}
+		});
+		button1Panel.add(codeBt);
 	}
 	private void debug(String text){
 		for(int i=0;i<text.length();i++){
 			LogUtils.log(i+":"+text.charAt(i)+","+((int)text.charAt(i)));
 		}
 	}
+	
+	private static void insertBetweenSelectionText(TextSelection selection,String header,String footer){
+    	String newText=header+selection.getSelection()+footer;
+		selection.replace(newText);
+    	
+		TextArea target=selection.getTargetTextArea();
+		target.setCursorPos(selection.getStart()+(header+selection.getSelection()).length());
+		target.setFocus(true);
+	    }
 	
 	private void titleSelected(int level){
 		Optional<TextSelection> selection= getTextSelection();
