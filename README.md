@@ -51,4 +51,5 @@ store last converted in local-storage
 
 support image,csv2table,csv2list,csv2titles
 ********
-(c)[Aki Miyazaki](https://plus.google.com/103021856782435660635/) 2013
+###Credits
+[Aki Miyazaki](https://plus.google.com/103021856782435660635/) 2013
