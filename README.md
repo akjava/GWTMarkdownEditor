@@ -31,18 +31,22 @@ release as widget(i hope you can use it in your gwt-app)
 Apache 2.0
 
 ###Functions
+**Key**
+- Title(choosed by pull-down menu)
+- Bold/Italic(select text and click button)
+- Code(select text and click button)
+- Blockquote(click button)
+- Line(click button)
+- URL(select and click button and set url)
+- List(selection lines and click)
 
-only support title control by ListBox
-
+**Others**
+store last converted in local-storage
 ###Tested
-
 | OS| Browser| Version|Test Date|
 | ------------- |:-------------:| -----:|-----:|
-| Windows7-64bit      | Chrome| 31 |3 Jan 2013|
-
+| Windows7-64bit      | Chrome| 31 |5 Jan 2013|
+********
 ###TODO
-store last modified
-add code,link,image
-support csv2table
-bold
-line
+
+support image,csv2table,csv2list,csv2titles

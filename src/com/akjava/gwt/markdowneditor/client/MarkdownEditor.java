@@ -1,12 +1,19 @@
 package com.akjava.gwt.markdowneditor.client;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.akjava.gwt.lib.client.LogUtils;
 import com.akjava.gwt.lib.client.StorageControler;
 import com.akjava.gwt.lib.client.StorageException;
 import com.akjava.gwt.lib.client.TextSelection;
 import com.akjava.gwt.lib.client.widget.TabInputableTextArea;
+import com.akjava.lib.common.functions.HtmlFunctions.StringToPreFixAndSuffix;
+import com.akjava.lib.common.predicates.StringPredicates;
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
-import com.google.gwt.core.client.GWT;
+import com.google.common.collect.FluentIterable;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -14,6 +21,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
@@ -208,6 +216,44 @@ public class MarkdownEditor extends HorizontalPanel {
 		});
 		lineBt.setTitle("Insert a Line");
 		button1Panel.add(lineBt);
+		
+		Button LinkBt=new Button("URL",new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
+					String selected=selection.getSelection();
+					String url=Window.prompt("put url", "http://");
+					String newText="["+selected+"]"+"("+url+")";
+					selection.replace(newText);
+					onTextAreaUpdate();
+				}
+				}
+		});
+		LinkBt.setTitle("Insert a URL");
+		button1Panel.add(LinkBt);
+		
+		Button ListBt=new Button("List",new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
+					String selected=selection.getSelection();
+					
+					List<String> converted=FluentIterable
+					.from(Arrays.asList(selected.split("\n")))
+					.filter(StringPredicates.getNotEmpty())
+					.transform(new StringToPreFixAndSuffix("- ",""))
+					.toList();
+					
+					selection.replace(Joiner.on("\n").join(converted));
+					
+					onTextAreaUpdate();
+				}
+				}
+		});
+		ListBt.setTitle("Convert to List");
+		button1Panel.add(ListBt);
 	}
 	private void debug(String text){
 		for(int i=0;i<text.length();i++){
