@@ -46,7 +46,9 @@ store last converted in local-storage
 | OS| Browser| Version|Test Date|
 | ------------- |:-------------:| -----:|-----:|
 | Windows7-64bit      | Chrome| 31 |5 Jan 2013|
-********
+
 ###TODO
 
 support image,csv2table,csv2list,csv2titles
+********
+(c)[Aki Miyazaki](https://plus.google.com/103021856782435660635/) 2013
