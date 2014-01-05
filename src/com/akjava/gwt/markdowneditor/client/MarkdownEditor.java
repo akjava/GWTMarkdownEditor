@@ -1,6 +1,8 @@
 package com.akjava.gwt.markdowneditor.client;
 
 import com.akjava.gwt.lib.client.LogUtils;
+import com.akjava.gwt.lib.client.StorageControler;
+import com.akjava.gwt.lib.client.StorageException;
 import com.akjava.gwt.lib.client.TextSelection;
 import com.google.common.base.Optional;
 import com.google.gwt.core.client.GWT;
@@ -21,12 +23,15 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 public class MarkdownEditor extends HorizontalPanel {
 
+	private static final String KEY_MARKDOWNEDITOR = "KEY_MARKDOWN_EDITOR";
 	private TextArea textArea;
 	private CheckBox autoConvertCheck;
 	private HTML previewHTML;
 	private TextArea htmlArea;
 	private ListBox titleLevelBox;
 
+	private StorageControler storageControler=new StorageControler(false);
+	
 	public MarkdownEditor(){
 		createLeftPanels();
 		createRightPanels();
@@ -86,7 +91,9 @@ public class MarkdownEditor extends HorizontalPanel {
 	private void createTextAreas(VerticalPanel parent) {
 		textArea = new TextArea();
 		parent.add(textArea);
-		//textArea.setText("line1 abc\r\nline2 efg\ntest3");
+		
+		textArea.setText(storageControler.getValue(KEY_MARKDOWNEDITOR, ""));
+		
 		textArea.setStylePrimaryName("textbg");
 	  	textArea.setWidth("560px");
 	    textArea.setHeight("700px");
@@ -137,6 +144,27 @@ public class MarkdownEditor extends HorizontalPanel {
 		});
 		titleLevelBox.setSelectedIndex(7);//default empty
 		button1Panel.add(titleLevelBox);
+		
+		Button boldBt=new Button("Bold",new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
+					insertBetweenSelectionText(selection,"**","**");	
+					onTextAreaUpdate();
+					}
+				}
+		});
+		button1Panel.add(boldBt);
+		Button ItalicBt=new Button("Italic",new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
+					insertBetweenSelectionText(selection,"*","*");	
+					onTextAreaUpdate();
+					}
+				}
+		});
+		button1Panel.add(ItalicBt);
 		
 		Button codeBt=new Button("Code",new ClickHandler() {
 			
@@ -214,6 +242,7 @@ public class MarkdownEditor extends HorizontalPanel {
 		}else{
 			
 		}
+		
 	}
 
 	private void doConvert() {
@@ -221,5 +250,11 @@ public class MarkdownEditor extends HorizontalPanel {
 		String html=Marked.marked(text);
 		htmlArea.setText(html);
 		previewHTML.setHTML(html);
+		
+		try {
+			storageControler.setValue(KEY_MARKDOWNEDITOR,text);
+		} catch (StorageException e) {
+			LogUtils.log(e.getMessage());
+		}
 	}
 }
