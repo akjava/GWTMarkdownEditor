@@ -58,5 +58,5 @@ support Youtube
 <a href="//plus.google.com/103021856782435660635?prsrc=3"
    rel="publisher" target="_top" style="text-decoration:none;display:inline-block;color:#333;text-align:center; font:13px/16px arial,sans-serif;white-space:nowrap;">
 <span style="display:inline-block;font-weight:bold;vertical-align:top;margin-right:5px; margin-top:0px;">Aki Miyazaki</span><span style="display:inline-block;vertical-align:top;margin-right:13px; margin-top:0px;">on</span>
-<img src="//ssl.gstatic.com/images/icons/gplus-16.png" alt="Google+" style="border:0;width:16px;height:16px;"/>
+<img src="http://ssl.gstatic.com/images/icons/gplus-16.png" alt="Google+" style="border:0;width:16px;height:16px;"/>
 </a>
