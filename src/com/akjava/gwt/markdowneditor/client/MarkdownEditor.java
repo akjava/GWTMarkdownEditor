@@ -39,6 +39,10 @@ public class MarkdownEditor extends HorizontalPanel {
 
 	private static final String KEY_MARKDOWNEDITOR = "KEY_MARKDOWN_EDITOR";
 	private TextArea textArea;
+	public TextArea getTextArea() {
+		return textArea;
+	}
+
 	private CheckBox autoConvertCheck;
 	private HTML previewHTML;
 	private TextArea htmlArea;
