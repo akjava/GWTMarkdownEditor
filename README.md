@@ -41,8 +41,10 @@ Apache 2.0
 - Image(select and click button and set url)
 - List(selection lines and click)
 - Table(selection tabbed-csv-lines and click)
+
 **Others**
-store last converted in local-storage
+- store last converted in local-storage
+
 ###Tested
 | OS| Browser| Version|Test Date|
 | ------------- |:-------------:| -----:|-----:|
@@ -52,4 +54,9 @@ store last converted in local-storage
 support Youtube
 ********
 ###Credits
-[Aki Miyazaki](https://plus.google.com/103021856782435660635/) 2013
+<!-- Place this code where you want the badge to render. -->
+<a href="//plus.google.com/103021856782435660635?prsrc=3"
+   rel="publisher" target="_top" style="text-decoration:none;display:inline-block;color:#333;text-align:center; font:13px/16px arial,sans-serif;white-space:nowrap;">
+<span style="display:inline-block;font-weight:bold;vertical-align:top;margin-right:5px; margin-top:0px;">Aki Miyazaki</span><span style="display:inline-block;vertical-align:top;margin-right:13px; margin-top:0px;">on</span>
+<img src="//ssl.gstatic.com/images/icons/gplus-16.png" alt="Google+" style="border:0;width:16px;height:16px;"/>
+</a>

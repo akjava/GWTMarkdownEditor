@@ -21,8 +21,9 @@
 <inherits name="com.akjava.gwt.common.Common"/>
 <inherits name="com.akjava.gwt.html5.Html5widget" />
   <!-- Specify the app entry point class.                         -->
+  <!-- 
   <entry-point class='com.akjava.gwt.markdowneditor.client.GWTMarkdownEditor'/>
-
+ -->
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>
   <source path='shared'/>
