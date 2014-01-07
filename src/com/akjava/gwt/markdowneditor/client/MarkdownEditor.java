@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.akjava.gwt.lib.client.GWTHTMLUtils;
 import com.akjava.gwt.lib.client.LogUtils;
 import com.akjava.gwt.lib.client.StorageControler;
 import com.akjava.gwt.lib.client.StorageException;
@@ -19,6 +20,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -32,12 +34,16 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 public class MarkdownEditor extends HorizontalPanel {
 
-	private static final String KEY_MARKDOWNEDITOR = "KEY_MARKDOWN_EDITOR";
+	  public static final String KEY_SESSION="markdowneditor_session_value";//for session storage
+	  public static final String KEY_LAST_SESSION_ID="markdowneditor_session_last_session_id";
+	  
+	//private static final String KEY_MARKDOWNEDITOR = "KEY_MARKDOWN_EDITOR";
 	private TextArea textArea;
 	public TextArea getTextArea() {
 		return textArea;
@@ -48,13 +54,56 @@ public class MarkdownEditor extends HorizontalPanel {
 	private TextArea htmlArea;
 	private ListBox titleLevelBox;
 
-	private StorageControler storageControler=new StorageControler(false);
+	private StorageControler storageControler=new StorageControler(false);//use session
 	private ListBox imageListBox;
 	
+	private Optional<String> syncHtmlKey=Optional.absent();
+	private Optional<String> syncTextKey=Optional.absent();
+	public void setSyncHtmlKey(Optional<String> syncHtmlKey) {
+		this.syncHtmlKey = syncHtmlKey;
+	}
+	public void setSyncTextKey(Optional<String> syncTextKey) {
+		this.syncTextKey = syncTextKey;
+	}
 	public MarkdownEditor(){
+		this(false,"","");
+	}
+	public MarkdownEditor(boolean readOnly,String session_id,String defaultValue){
 		createLeftPanels();
 		createRightPanels();
+		
+		/**
+		 * what is doing?
+		 * try to keep value when browser back
+		 */
+		 if(!session_id.isEmpty()){
+	        	try {
+	        		String lastSessionId = storageControler.getValue(KEY_LAST_SESSION_ID, "");
+	        		GWT.log("gwtwiki:lastSessionId="+lastSessionId+",session_id="+session_id);
+	        		if(!session_id.equals(lastSessionId)){
+	        			//new situation
+	        			GWT.log("gwtwiki:different session id,get initial value from PEOPERTY_DEFAULT_ID");
+	        			//String data=ValueUtils.getFormValueById(PEOPERTY_DEFAULT_ID, "");
+	    		        textArea.setText(defaultValue);
+	    		        storageControler.setValue(KEY_LAST_SESSION_ID, session_id);//mark used
+	        		}else{
+	        			GWT.log("gwtwiki:use last modified value");
+	        			String lastModified=storageControler.getValue(KEY_SESSION, "");
+	        			textArea.setText(lastModified);
+	        		}
+				} catch (StorageException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	        	
+	        }else{
+	        	GWT.log("gwtwiki:no session id,get initial value from PEOPERTY_DEFAULT_ID");
+	        	//String data=ValueUtils.getFormValueById(PEOPERTY_DEFAULT_ID, "");
+		        textArea.setText(defaultValue);
+	        }
 	}
+	
+	
 
 	private void createRightPanels() {
 		VerticalPanel rightPanel=new VerticalPanel();
@@ -115,7 +164,7 @@ public class MarkdownEditor extends HorizontalPanel {
 		textArea = new TabInputableTextArea();
 		parent.add(textArea);
 		
-		textArea.setText(storageControler.getValue(KEY_MARKDOWNEDITOR, ""));
+		//textArea.setText(storageControler.getValue(KEY_MARKDOWNEDITOR, ""));
 		
 		textArea.setStylePrimaryName("textbg");
 	  	textArea.setWidth("560px");
@@ -125,13 +174,13 @@ public class MarkdownEditor extends HorizontalPanel {
 			public void onKeyUp(KeyUpEvent event) {
 				
 				if(event.getNativeKeyCode()==KeyCodes.KEY_ENTER){
-				doConvert();
+					onTextAreaUpdate();
 				}
 				else if(event.isControlKeyDown()){//copy or paste
-					doConvert();
+					onTextAreaUpdate();
 				}
 				else{
-					doConvert();
+					onTextAreaUpdate();
 				}
 			}
 		});
@@ -533,19 +582,37 @@ public class MarkdownEditor extends HorizontalPanel {
 		}else{
 			
 		}
-		
+		syncOutput();//sync storage or html/text for form
 	}
+	
+	/**
+	 * syncOutput is integrate for standard html web-apps
+	 */
+    public void syncOutput(){//TODO async
+    	
+    		//set values for html-form hidden
+    		if(syncHtmlKey.isPresent()){
+    			String html=htmlArea.getText();
+    			GWTHTMLUtils.setValueAttributeById(syncHtmlKey.get(), html);
+    		}
+    		
+        	String text=textArea.getText();
+    		if(syncTextKey.isPresent()){
+    			GWTHTMLUtils.setValueAttributeById(syncTextKey.get(), text);
+    		}
+    		
+    		//store to session-storage for back-button
+    		try {
+    			storageControler.setValue(KEY_SESSION, textArea.getText());
+    		} catch (StorageException e) {
+    			e.printStackTrace();
+    		}
+    }
 
 	private void doConvert() {
 		String text=textArea.getText();
 		String html=Marked.marked(text);
 		htmlArea.setText(html);
-		previewHTML.setHTML(html);
-		
-		try {
-			storageControler.setValue(KEY_MARKDOWNEDITOR,text);
-		} catch (StorageException e) {
-			LogUtils.log(e.getMessage());
-		}
+		previewHTML.setHTML(html);	
 	}
 }
