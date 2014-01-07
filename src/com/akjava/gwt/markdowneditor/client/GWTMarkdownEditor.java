@@ -1,11 +1,10 @@
 package com.akjava.gwt.markdowneditor.client;
 
 import com.akjava.gwt.lib.client.GWTHTMLUtils;
+import com.akjava.gwt.lib.client.LogUtils;
 import com.google.common.base.Optional;
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.Window;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -20,7 +19,12 @@ public class GWTMarkdownEditor implements EntryPoint {
 	  
 	public void onModuleLoad() {
 		if(GWTHTMLUtils.isExistPanel("gwtmarkdowneditorcontainer")){
-			GWTHTMLUtils.getPanelIfExist("gwtmarkdowneditorcontainer").add(createMarkdownEditortByHtml());
+			MarkdownEditor editor=createMarkdownEditortByHtml();
+			GWTHTMLUtils.getPanelIfExist("gwtmarkdowneditorcontainer").add(editor);
+			//trying fix scroll bugs,seems not bad
+			editor.getTextArea().setFocus(true); //if true scroll problem will fixed,but window scroll to there.
+			Window.scrollTo(0, -1000);
+			editor.getTextArea().setFocus(false);
 		}
 		
 	}

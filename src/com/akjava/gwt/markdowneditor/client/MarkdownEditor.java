@@ -28,6 +28,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -85,6 +87,7 @@ public class MarkdownEditor extends HorizontalPanel {
 	        			GWT.log("gwtwiki:different session id,get initial value from PEOPERTY_DEFAULT_ID");
 	        			//String data=ValueUtils.getFormValueById(PEOPERTY_DEFAULT_ID, "");
 	    		        textArea.setText(defaultValue);
+	    		        storageControler.setValue(KEY_SESSION,defaultValue);
 	    		        storageControler.setValue(KEY_LAST_SESSION_ID, session_id);//mark used
 	        		}else{
 	        			GWT.log("gwtwiki:use last modified value");
@@ -101,6 +104,11 @@ public class MarkdownEditor extends HorizontalPanel {
 	        	//String data=ValueUtils.getFormValueById(PEOPERTY_DEFAULT_ID, "");
 		        textArea.setText(defaultValue);
 	        }
+		 
+		 if(readOnly){
+			 textArea.setReadOnly(readOnly);
+		 }
+		 doConvert();
 	}
 	
 	
@@ -184,6 +192,21 @@ public class MarkdownEditor extends HorizontalPanel {
 				}
 			}
 		});
+	    /*
+	     * these called when focus out
+	    textArea.addValueChangeHandler(new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				LogUtils.log("value-changed");
+			}
+		});
+	    textArea.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				LogUtils.log("changed");
+			}
+		});
+		*/
 	}
 
 	private void createToolbars(VerticalPanel parent) {
