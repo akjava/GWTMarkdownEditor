@@ -8,6 +8,51 @@ import com.google.gwt.user.client.Window;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
+ * 
+ *
+HOW to Integrate HTML
+=====================
+ text input name is hidden
+ html input name is hidden2
+ 
+ <div id="gwtmarkdowneditorcontainer"></div> is location to insert GWTWidget
+ 
+Template Side
+-------------
+###SHOW CONTENT
+<input type="hidden" id="gwtmarkdowneditorreadonly"/>
+<input type="hidden" name="initial" id="gwtmarkdowneditordefaultid" value="${value_hidden}"/><br/>
+<div id="gwtmarkdowneditorcontainer"></div>
+
+###ADD CONTENT
+<input type="hidden" id="gwtmarkdowneditorsessionid" value="${gwtwikisession}"/>
+<input type="hidden" id="gwtmarkdowneditoroutputtext" name="hidden"><br/>
+<input type="hidden" id="gwtmarkdowneditoroutputhtml" name="hidden2"><br/>
+<div id="gwtmarkdowneditorcontainer"></div>
+
+###EDIT CONTENT
+<input type="hidden" id="gwtmarkdowneditorsessionid" value="${gwtwikisession}"/>
+<input type="hidden" name="initial" id="gwtmarkdowneditordefaultid" value="${value_hidden}"/><br/>
+<input type="hidden" id="gwtmarkdowneditoroutputtext" name="hidden" value="${value_hidden}"><br/>
+<input type="hidden" id="gwtmarkdowneditoroutputhtml" name="hidden2" value="${value_hidden2}"><br/>
+<div id="gwtmarkdowneditorcontainer"></div>
+
+Server Side
+-------------
+###SHOW CONTENT
+get text value from Entity and put in ${value_hidden} template.
+###ADD CONTENT
+create uniq-id and put it ${gwtwikisession} template.
+`dataMap.put("gwtwikisession", ""+System.currentTimeMillis());`
+get text value from Entity and put in ${value_hidden} template.
+###EDIT CONTENT
+create uniq-id and put it ${gwtwikisession} template.
+`dataMap.put("gwtwikisession", ""+System.currentTimeMillis());`
+
+ get text value from Entity and put in ${value_hidden} template.
+ get html value from Entity and put in ${value_hidden2} template.
+ in this case you nedd put value in input form too,otherwise if you don't edit anything and click submit ;send empty value.
+ 
  */
 public class GWTMarkdownEditor implements EntryPoint {
 	  public static final String PEOPERTY_READ_ONLY="gwtmarkdowneditorreadonly";

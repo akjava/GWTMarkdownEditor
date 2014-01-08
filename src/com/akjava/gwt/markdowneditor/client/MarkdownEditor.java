@@ -70,6 +70,15 @@ public class MarkdownEditor extends HorizontalPanel {
 	public MarkdownEditor(){
 		this(false,"","");
 	}
+	/**
+	 * 
+	 * @param readOnly
+	 * @param session_id
+	 * @param defaultValue
+	 * 
+	 * HTML integration
+	 * @see GWTMarkdownEditor
+	 */
 	public MarkdownEditor(boolean readOnly,String session_id,String defaultValue){
 		createLeftPanels();
 		createRightPanels();
@@ -77,6 +86,15 @@ public class MarkdownEditor extends HorizontalPanel {
 		/**
 		 * what is doing?
 		 * try to keep value when browser back
+		 * 
+		 * session_id is usually get from html hidden-input.
+		 * get KEY_LAST_SESSION_ID from storage.
+		 * 
+		 * if these are equals,it's same session and action ;get value from storage.
+		 * last edited text always store in storage.
+		 * 
+		 * session_id is created when edit or add button clicked manually
+		 * 
 		 */
 		 if(!session_id.isEmpty()){
 	        	try {
