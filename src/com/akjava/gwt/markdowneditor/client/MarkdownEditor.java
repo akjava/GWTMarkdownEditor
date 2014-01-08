@@ -54,6 +54,10 @@ public class MarkdownEditor extends HorizontalPanel {
 	private CheckBox autoConvertCheck;
 	private HTML previewHTML;
 	private TextArea htmlArea;
+	public TextArea getHtmlArea() {
+		return htmlArea;
+	}
+
 	private ListBox titleLevelBox;
 
 	private StorageControler storageControler=new StorageControler(false);//use session
@@ -61,6 +65,8 @@ public class MarkdownEditor extends HorizontalPanel {
 	
 	private Optional<String> syncHtmlKey=Optional.absent();
 	private Optional<String> syncTextKey=Optional.absent();
+	private TabPanel tab;
+	private VerticalPanel previewPanel;
 	public void setSyncHtmlKey(Optional<String> syncHtmlKey) {
 		this.syncHtmlKey = syncHtmlKey;
 	}
@@ -130,6 +136,12 @@ public class MarkdownEditor extends HorizontalPanel {
 	}
 	
 	
+	public void setTotalHeightPX(int px){
+		tab.setHeight(px+"px");
+		previewPanel.setHeight(px+"px");
+		htmlArea.setHeight(px+"px");
+		 textArea.setHeight(px+"px");
+	}
 
 	private void createRightPanels() {
 		VerticalPanel rightPanel=new VerticalPanel();
@@ -137,26 +149,26 @@ public class MarkdownEditor extends HorizontalPanel {
 		
 		createOptionArea(rightPanel);
 
-		TabPanel tab=new TabPanel();
+		tab = new TabPanel();
 		rightPanel.add(tab);
-		tab.setSize("560px","700px");
+		tab.setSize("560px","600px");
 		createPreviewArea(tab);
 		createHtmlArea(tab);
 		tab.selectTab(0);
 	}
 
 	private void createPreviewArea(TabPanel tab) {
-		VerticalPanel panel=new VerticalPanel();
-		panel.setHeight("700px");
+		previewPanel = new VerticalPanel();
+		previewPanel.setHeight("600px");
 		previewHTML = new HTML();
-		panel.add(previewHTML);
-		tab.add(panel,"Preview");
+		previewPanel.add(previewHTML);
+		tab.add(previewPanel,"Preview");
 	}
 	
 	private void createHtmlArea(TabPanel tab) {
 		htmlArea = new TextArea();
 		htmlArea.setWidth("560px");
-		htmlArea.setHeight("700px");
+		htmlArea.setHeight("600px");
 		tab.add(htmlArea,"HTML");
 	}
 
@@ -194,7 +206,7 @@ public class MarkdownEditor extends HorizontalPanel {
 		
 		textArea.setStylePrimaryName("textbg");
 	  	textArea.setWidth("560px");
-	    textArea.setHeight("700px");
+	    textArea.setHeight("600px");
 	    textArea.addKeyUpHandler(new KeyUpHandler() {
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
@@ -260,7 +272,7 @@ public class MarkdownEditor extends HorizontalPanel {
 		});
 		titleLevelBox.setTitle("convert pointed line to title");
 		titleLevelBox.setSelectedIndex(7);//default empty
-		button1Panel.add(titleLevelBox);
+		button2Panel.add(titleLevelBox);
 		
 		Button boldBt=new Button("Bold",new ClickHandler() {
 			@Override
