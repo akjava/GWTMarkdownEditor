@@ -662,7 +662,11 @@ public class MarkdownEditor extends HorizontalPanel {
     		}
     }
 
-	private void doConvert() {
+    public String getHtml(){
+    	return htmlArea.getText();
+    }
+    
+	public void doConvert() {
 		String text=textArea.getText();
 		String html=Marked.marked(text);
 		htmlArea.setText(html);
