@@ -1,0 +1,4 @@
+[link](http://www.google.co.jp)
+${v1}[link](/top.html)
+[link](../top.html)${v2}
+${v3}
