@@ -15,10 +15,10 @@ public class ExtractTextFromMarkdown {
 	
 	
 
-	public ExtractResult extract(String markdown){
+	public ExtractedResult extract(String markdown){
 		String[] lines=CSVUtils.splitLinesWithGuava(markdown).toArray(new String[0]);
 		
-		ExtractResult result=new ExtractResult();
+		ExtractedResult result=new ExtractedResult();
 		result.setMarkdownTemplateMap(new LinkedHashMap<String, String>());
 		
 		Analyzer analyzer=new Analyzer();
@@ -456,7 +456,7 @@ public class ExtractTextFromMarkdown {
 		boolean linecode;
 
 		boolean intag;//not support nested tag do search simply..
-		private ExtractResult extractedResult;
+		private ExtractedResult extractedResult;
 		public void setLineAt(int at){
 			lineAt=at;
 			textStart=0;
@@ -480,7 +480,7 @@ public class ExtractTextFromMarkdown {
 		}
 	}
 	
-	public static class ExtractResult{
+	public static class ExtractedResult{
 		
 		private void addTemplate(String key,String value){
 			markdownTemplateMap.put(key,value);
@@ -498,7 +498,7 @@ public class ExtractTextFromMarkdown {
 		public void setExtractedMarkdown(String extractedMarkdown) {
 			this.extractedMarkdown = extractedMarkdown;
 		}
-		public String getExtractedMarkdown() {
+		public String getExtractedMarkdownTemplateText() {
 			return extractedMarkdown;
 		}
 	}

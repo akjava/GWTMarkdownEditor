@@ -5,7 +5,7 @@ package markdown;
 import junit.framework.TestCase;
 
 import com.akjava.gwt.markdowneditor.client.ExtractTextFromMarkdown;
-import com.akjava.gwt.markdowneditor.client.ExtractTextFromMarkdown.ExtractResult;
+import com.akjava.gwt.markdowneditor.client.ExtractTextFromMarkdown.ExtractedResult;
 import com.akjava.lib.common.utils.IOUtils;
 import com.google.common.base.Joiner;
 import com.google.common.base.Joiner.MapJoiner;
@@ -103,7 +103,7 @@ private ExtractTextFromMarkdown extractTextFromMarkdown=new ExtractTextFromMarkd
 		String correct=IOUtils.readResourceAsUTF8Text("markdown/resources/"+key+".properties");
 		
 		
-		ExtractResult result=extractTextFromMarkdown.extract(markdown);
+		ExtractedResult result=extractTextFromMarkdown.extract(markdown);
 		
 		String extracted=joiner.join(result.getMarkdownTemplateMap());
 		assertEquals(correct, extracted);
@@ -114,9 +114,9 @@ private ExtractTextFromMarkdown extractTextFromMarkdown=new ExtractTextFromMarkd
 		String correct=IOUtils.readResourceAsUTF8Text("markdown/resources/"+key+".txt");
 		
 		
-		ExtractResult result=extractTextFromMarkdown.extract(markdown);
+		ExtractedResult result=extractTextFromMarkdown.extract(markdown);
 		
 		
-		assertEquals(correct, result.getExtractedMarkdown().replace("\n", "\r\n"));
+		assertEquals(correct, result.getExtractedMarkdownTemplateText().replace("\n", "\r\n"));
 	}
 }
