@@ -58,6 +58,11 @@ public class ExtractTextFromMarkdown {
 				}
 			}
 			
+			String trimed=line.trim();
+			if(trimed.startsWith(">")){
+				passStrings.add(line);
+				continue;
+			}
 			
 			//ignore title
 			if(MarkdownPredicates.getStartWithTitleLinePredicate().apply(line)){
@@ -139,6 +144,27 @@ public class ExtractTextFromMarkdown {
 					}else{
 						System.out.println("strike:"+line.substring(analyzer.textStart, j+1));
 					}
+				}else if(analyzer.textcode){
+					if(ch=='`'){
+						int cotinued=j;
+						for(int k=j+1;k<line.length();k++){
+							
+							if(line.charAt(k)!='`'){
+								break;
+							}
+							cotinued=k;
+						}
+						int length=cotinued-j+1;
+						if(length>0){
+						newLine+=line.substring(analyzer.textStart,cotinued+1);
+						j=cotinued;
+						analyzer.textcode=false;
+						}else{
+							System.out.println("textcode:"+line.substring(analyzer.textStart, j+1));
+						}
+					}else{
+						System.out.println("textcode:"+line.substring(analyzer.textStart, j+1));
+					}
 				}else{
 				if(ch=='*'){
 					//add safe text
@@ -210,6 +236,39 @@ public class ExtractTextFromMarkdown {
 					}
 					j=cotinued;//skip here
 					
+				}else if(ch=='`'){
+					//add safe text
+					String safeText=analyzer.text;
+					if(!safeText.isEmpty()){
+						//do template
+						String key=analyzer.getValueKey();
+						analyzer.incrementIndex();
+						
+						String value=safeText;
+						String converted="";
+						result.addTemplate(key, value);
+						converted="${"+key+"}";
+						
+						newLine+=converted;
+						analyzer.text="";
+					}
+					
+					analyzer.textStart=j;
+					int cotinued=j;
+					//check until continue
+					for(int k=j+1;k<line.length();k++){
+						if(line.charAt(k)!='`'){
+							break;
+						}
+						cotinued=k;
+					}
+					int length=cotinued-j+1;
+					if(length>0){
+						analyzer.textcode=true;
+						System.out.println("textcode:"+line.substring(analyzer.textStart, cotinued+1));
+					}
+					j=cotinued;//skip here
+					
 				}else{
 					//safe text
 					analyzer.text+=ch;
@@ -226,6 +285,9 @@ public class ExtractTextFromMarkdown {
 				newLine+=line.substring(analyzer.textStart);
 				passStrings.add(newLine);
 			}else if(analyzer.strike){
+				newLine+=line.substring(analyzer.textStart);
+				passStrings.add(newLine);
+			}else if(analyzer.textcode){
 				newLine+=line.substring(analyzer.textStart);
 				passStrings.add(newLine);
 			}else{
@@ -269,6 +331,7 @@ public class ExtractTextFromMarkdown {
 		int textEnd;
 		boolean textcode;
 		boolean linecode;
+
 		boolean intag;//not support nested tag do search simply..
 		private ExtractResult extractedResult;
 		public void setLineAt(int at){
@@ -278,6 +341,8 @@ public class ExtractTextFromMarkdown {
 			bold=false;
 			italic=false;
 			strike=false;
+			textcode=false;
+			
 			text="";
 			
 		}

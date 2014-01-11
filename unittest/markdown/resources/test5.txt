@@ -1,0 +1,7 @@
+${v1}`strike`
+`strike`${v2}
+${v3}`strike`${v4}
+${v5}`strike`${v6}`strike`${v7}
+`strike
+${v8}
+${v9}`
