@@ -42,4 +42,16 @@ public class MarkdownPredicates {
 		}
 		
 	}
+	public static StartWithTitle1OrTitle2Predicate getStartWithTitle1OrTitle2Predicate(){
+		return StartWithTitle1OrTitle2Predicate.INSTANCE;
+	}
+	
+	public enum  StartWithTitle1OrTitle2Predicate implements Predicate<String>{
+		INSTANCE;
+		@Override
+		public boolean apply(String input) {
+			return input.startsWith("===") || input.startsWith("---") ;
+		}
+		
+	}
 }

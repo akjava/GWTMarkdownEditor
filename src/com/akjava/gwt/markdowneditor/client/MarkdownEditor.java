@@ -10,7 +10,8 @@ import com.akjava.gwt.lib.client.StorageControler;
 import com.akjava.gwt.lib.client.StorageException;
 import com.akjava.gwt.lib.client.TextSelection;
 import com.akjava.gwt.lib.client.widget.TabInputableTextArea;
-import com.akjava.lib.common.functions.HtmlFunctions.StringToPreFixAndSuffix;
+import com.akjava.lib.common.functions.StringFunctions;
+import com.akjava.lib.common.functions.StringFunctions.StringToPreFixAndSuffix;
 import com.akjava.lib.common.predicates.StringPredicates;
 import com.akjava.lib.common.tag.Tag;
 import com.akjava.lib.common.utils.CSVUtils;
@@ -399,7 +400,7 @@ public class MarkdownEditor extends HorizontalPanel {
 					List<String> converted=FluentIterable
 					.from(Arrays.asList(selected.split("\n")))
 					.filter(StringPredicates.getNotEmpty())
-					.transform(new StringToPreFixAndSuffix("- ",""))
+					.transform(new StringFunctions.StringToPreFixAndSuffix("- ",""))
 					.toList();
 					
 					selection.replace(Joiner.on("\n").join(converted));
@@ -671,5 +672,8 @@ public class MarkdownEditor extends HorizontalPanel {
 		String html=Marked.marked(text);
 		htmlArea.setText(html);
 		previewHTML.setHTML(html);	
+	}
+	public HTML getPreviewHTML() {
+		return previewHTML;
 	}
 }
