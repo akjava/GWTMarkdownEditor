@@ -64,6 +64,11 @@ public class ExtractTextFromMarkdown {
 				continue;
 			}
 			
+			if(trimed.startsWith("***")){
+				passStrings.add(line);
+				continue;
+			}
+			
 			//ignore title
 			if(MarkdownPredicates.getStartWithTitleLinePredicate().apply(line)){
 				passStrings.add(line);
@@ -80,6 +85,28 @@ public class ExtractTextFromMarkdown {
 			
 			String newLine="";
 			for(int j=0;j<line.length();j++){
+				
+				//skip-list
+				if(j==0 && trimed.startsWith("-")){
+					int cotinued=0;
+					//check until continue
+					for(int k=j+1;k<trimed.length();k++){
+						
+						if(!Character.isWhitespace(trimed.charAt(k))){
+							break;
+						}
+						cotinued=k;
+					}
+					int length=cotinued;
+					if(length>0){
+					//whitespace - whitespace
+					
+					int trimstart=line.indexOf("-");
+					j=trimstart+length+1;
+					newLine+=line.substring(0,trimstart+length+1);
+					}
+				}
+				
 				char ch=line.charAt(j);
 				if(analyzer.italic){
 					if(ch=='*'){//close italic

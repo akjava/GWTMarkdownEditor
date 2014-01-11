@@ -56,6 +56,13 @@ private ExtractTextFromMarkdown extractTextFromMarkdown=new ExtractTextFromMarkd
 		doTestTemplate("test6");
 	}
 	
+	public void testList(){
+		doTest("test7");
+	}
+	public void testListTemplate(){
+		doTestTemplate("test7");
+	}
+	
 	private void doTest(String key) {
 		String markdown=IOUtils.readResourceAsUTF8Text("markdown/resources/"+key+".md");
 		String correct=IOUtils.readResourceAsUTF8Text("markdown/resources/"+key+".properties");
