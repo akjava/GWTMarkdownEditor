@@ -50,7 +50,38 @@ public class MarkdownPredicates {
 		INSTANCE;
 		@Override
 		public boolean apply(String input) {
+			if(input.indexOf("|")!=-1){
+				return false;
+			}
 			return input.startsWith("===") || input.startsWith("---") ;
+		}
+		
+	}
+	
+	public static TableLinePredicate getTableLinePredicate(){
+		return TableLinePredicate.INSTANCE;
+	}
+	
+	public enum  TableLinePredicate implements Predicate<String>{
+		INSTANCE;
+		@Override
+		public boolean apply(String input) {
+			input=input.trim();
+			boolean containA=false;
+			boolean containB=false;
+			
+			for(int i=0;i<input.length();i++){
+				char ch=input.charAt(i);
+				if(ch=='|'){
+					containA=true;
+				}else if(ch=='-'){
+					containB=true;
+				}else{
+					return false;
+				}
+			}
+			
+			return containA&&containB;
 		}
 		
 	}

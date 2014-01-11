@@ -25,6 +25,7 @@ public class ExtractTextFromMarkdown {
 		List<String> passStrings=new ArrayList<String>();
 		for(int i=0;i<lines.length;i++){
 			String line=lines[i];
+			
 			String next=null;
 			if(i<lines.length-1){
 				next=lines[i+1];
@@ -69,6 +70,7 @@ public class ExtractTextFromMarkdown {
 				continue;
 			}
 			
+			
 			//ignore title
 			if(MarkdownPredicates.getStartWithTitleLinePredicate().apply(line)){
 				passStrings.add(line);
@@ -82,6 +84,13 @@ public class ExtractTextFromMarkdown {
 				i++;
 				continue;
 			}
+			
+			if(MarkdownPredicates.getTableLinePredicate().apply(trimed)){
+				passStrings.add(line);
+				continue;
+			}
+			
+			System.out.println("start-parse-character");
 			
 			String newLine="";
 			for(int j=0;j<line.length();j++){
@@ -296,7 +305,24 @@ public class ExtractTextFromMarkdown {
 					}
 					j=cotinued;//skip here
 					
-				}else{
+				}else if(ch=='|'){
+					String safeText=analyzer.text;
+					if(!safeText.isEmpty()){
+						//do template
+						String key=analyzer.getValueKey();
+						analyzer.incrementIndex();
+						
+						String value=safeText;
+						String converted="";
+						result.addTemplate(key, value);
+						converted="${"+key+"}";
+						
+						newLine+=converted;
+						analyzer.text="";
+					}
+					newLine+='|';//just skip
+				}
+				else{
 					//safe text
 					analyzer.text+=ch;
 					System.out.println("safe-text:"+analyzer.text);
