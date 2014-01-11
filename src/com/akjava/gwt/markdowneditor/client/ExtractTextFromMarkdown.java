@@ -358,6 +358,39 @@ public class ExtractTextFromMarkdown {
 					analyzer.text+=ch;
 					System.out.println("safe-text:"+analyzer.text);
 					}
+				}else if(ch=='!'){
+					boolean findLink=false;
+					if(j<line.length()-1 && line.charAt(j+1)=='['){
+					int connection=line.indexOf("](",j+1);
+					if(connection!=-1){
+						int end=line.indexOf(")");
+						if(end!=-1){//find link
+							//make key
+							String safeText=analyzer.text;
+							if(!safeText.isEmpty()){
+								//do template
+								String key=analyzer.getValueKey();
+								analyzer.incrementIndex();
+								
+								String value=safeText;
+								String converted="";
+								result.addTemplate(key, value);
+								converted="${"+key+"}";
+								
+								newLine+=converted;
+								analyzer.text="";
+							}
+							//skip links
+							newLine+=line.substring(j,end+1);
+							j=end;//auto increment
+							findLink=true;
+						}
+					}
+					}
+					if(!findLink){
+					analyzer.text+=ch;
+					System.out.println("safe-text:"+analyzer.text);
+					}
 				}
 				else{
 					//safe text

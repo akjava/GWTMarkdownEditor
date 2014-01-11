@@ -1,0 +1,75 @@
+Android Dev Phone 1 をSIMカード無しでアクティベート
+=====================================
+${v1}
+${v2}
+${v3}**activate adp1 without sim card**${v4}
+[http://www.gotontheinter.net/content/faq-unlockingactivating-g1-or-adp1-without-sim-card](http://www.gotontheinter.net/content/faq-unlockingactivating-g1-or-adp1-without-sim-card)
+
+
+${v5}
+${v6}
+![](http://www3.akjava.com//img2/androiddev6.png)
+
+###アクティベート
+${v7}
+####Androidの起動
+${v8}
+####USBドライバーのインストール
+${v9}
+####シェルに接続
+${v10}
+${v11}
+
+${v12}
+```
+adb -d shell
+```
+${v13}
+${v14}
+
+${v15}
+```
+su
+```
+${v16}
+
+####settingのdevice_provisionedを更新する
+${v17}
+${v18}
+```
+sqlite3 /data/data/com.android.providers.settings/databases/settings.db
+```
+${v19}* from system; とかすると、現在の設定が見れます。
+
+${v20}
+```
+INSERT INTO system (name, value) VALUES ('device_provisioned', 1);
+```
+${v21}**device_provisioned**${v22}
+${v23}* from system;とか入れると、*${v24}|${v25}
+${v26}
+${v27}
+####Android端末の再起動
+${v28}
+${v29}
+${v30}|${v31}
+####設定Activityの起動
+${v32}
+${v33}
+```
+adb shell
+```
+${v34}
+```
+am start -a android.intent.action.MAIN -n com.android.settings/.Settings 
+```
+####Wifiの設定
+${v35}**Wi-fi**${v36}
+${v37}
+${v38}
+${v39}**Wifiアイコン**${v40}
+
+${v41}
+###関連情報
+${v42}
+[http://hanagurotanuki.blogspot.com/2008/12/android-dev-phone-1-sim.html](http://hanagurotanuki.blogspot.com/2008/12/android-dev-phone-1-sim.html)

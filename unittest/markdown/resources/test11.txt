@@ -1,0 +1,68 @@
+Application Componentsについて
+==========================
+${v1}
+${v2}
+${v3}
+
+${v4}
+${v5}
+
+${v6}
+
+
+${v7}
+${v8}
+${v9}
+${v10}
+
+${v11}
+${v12}
+${v13}
+
+${v14}
+${v15}
+${v16}
+
+
+###コンポーネントの起動
+${v17}
+${v18}
+
+###コンポーネントの停止
+${v19}
+${v20}
+
+
+###The manifest file
+${v21}
+
+###IntentFilters
+${v22}
+${v23}
+${v24}
+${v25}
+
+${v26}
+[http://www.openintents.org/en/intentstable](http://www.openintents.org/en/intentstable)
+
+###Activities and Tasks
+${v27}
+####Launch modes
+${v28}
+${v29}
+${v30}
+${v31}
+${v32}
+####Clearing the stack
+${v33}
+${v34}
+####Starting tasks
+${v35}
+${v36}
+###Processes and Threads
+${v37}
+
+###Component Lifecycles
+${v38}
+${v39}
+${v40}
