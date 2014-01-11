@@ -40,6 +40,25 @@ public class ExtractTextFromMarkdown {
 			
 			analyzer.setLineAt(i);
 			
+			if(analyzer.linecode){
+				if(line.indexOf("```")!=-1){
+					analyzer.linecode=false;
+					passStrings.add(line);
+					continue;
+				}
+				else{
+					passStrings.add(line);
+					continue;
+				}
+			}else{
+				if(line.indexOf("```")!=-1){
+					analyzer.linecode=true;
+					passStrings.add(line);
+					continue;
+				}
+			}
+			
+			
 			//ignore title
 			if(MarkdownPredicates.getStartWithTitleLinePredicate().apply(line)){
 				passStrings.add(line);
@@ -99,6 +118,27 @@ public class ExtractTextFromMarkdown {
 					}else{
 						System.out.println("bold:"+line.substring(analyzer.textStart, j+1));
 					}
+				}else if(analyzer.strike){
+					if(ch=='~'){
+						int cotinued=j;
+						for(int k=j+1;k<line.length();k++){
+							
+							if(line.charAt(k)!='~'){
+								break;
+							}
+							cotinued=k;
+						}
+						int length=cotinued-j+1;
+						if(length>1){
+						newLine+=line.substring(analyzer.textStart,cotinued+1);
+						j=cotinued;
+						analyzer.strike=false;
+						}else{
+							System.out.println("strike:"+line.substring(analyzer.textStart, j+1));
+						}
+					}else{
+						System.out.println("strike:"+line.substring(analyzer.textStart, j+1));
+					}
 				}else{
 				if(ch=='*'){
 					//add safe text
@@ -137,6 +177,39 @@ public class ExtractTextFromMarkdown {
 						System.out.println("bold:"+line.substring(analyzer.textStart, cotinued+1));
 					}
 					j=cotinued;//skip here
+				}else if(ch=='~'){
+					//add safe text
+					String safeText=analyzer.text;
+					if(!safeText.isEmpty()){
+						//do template
+						String key=analyzer.getValueKey();
+						analyzer.incrementIndex();
+						
+						String value=safeText;
+						String converted="";
+						result.addTemplate(key, value);
+						converted="${"+key+"}";
+						
+						newLine+=converted;
+						analyzer.text="";
+					}
+					
+					analyzer.textStart=j;
+					int cotinued=j;
+					//check until continue
+					for(int k=j+1;k<line.length();k++){
+						if(line.charAt(k)!='~'){
+							break;
+						}
+						cotinued=k;
+					}
+					int length=cotinued-j+1;
+					if(length>1){
+						analyzer.strike=true;
+						System.out.println("strike:"+line.substring(analyzer.textStart, cotinued+1));
+					}
+					j=cotinued;//skip here
+					
 				}else{
 					//safe text
 					analyzer.text+=ch;
@@ -150,6 +223,9 @@ public class ExtractTextFromMarkdown {
 				newLine+=line.substring(analyzer.textStart);
 				passStrings.add(newLine);
 			}else if(analyzer.bold){
+				newLine+=line.substring(analyzer.textStart);
+				passStrings.add(newLine);
+			}else if(analyzer.strike){
 				newLine+=line.substring(analyzer.textStart);
 				passStrings.add(newLine);
 			}else{
@@ -191,7 +267,8 @@ public class ExtractTextFromMarkdown {
 		int lineAt;
 		int textStart;
 		int textEnd;
-		boolean incode;
+		boolean textcode;
+		boolean linecode;
 		boolean intag;//not support nested tag do search simply..
 		private ExtractResult extractedResult;
 		public void setLineAt(int at){
@@ -200,6 +277,7 @@ public class ExtractTextFromMarkdown {
 			textEnd=0;
 			bold=false;
 			italic=false;
+			strike=false;
 			text="";
 			
 		}

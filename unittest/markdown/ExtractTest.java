@@ -28,6 +28,20 @@ private ExtractTextFromMarkdown extractTextFromMarkdown=new ExtractTextFromMarkd
 		doTestTemplate("test2");
 	}
 	
+	public void testStrike(){
+		doTest("test3");
+	}
+	public void testCodeStrike(){
+		doTestTemplate("test3");
+	}
+	
+	public void testCode(){
+		doTest("test4");
+	}
+	public void testCodeTemplate(){
+		doTestTemplate("test4");
+	}
+	
 	private void doTest(String key) {
 		String markdown=IOUtils.readResourceAsUTF8Text("markdown/resources/"+key+".md");
 		String correct=IOUtils.readResourceAsUTF8Text("markdown/resources/"+key+".properties");

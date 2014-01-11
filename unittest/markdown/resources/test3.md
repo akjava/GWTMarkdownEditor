@@ -1,20 +1,7 @@
-hello1 **bold**
-hello2 *italic*
-hello3 ~~strike~~
-**bold**bbb
-*italic*iii
-~~strike~~sss
-hello4 **bold**bbbb
-hello5 *italic*iii
-hello6 ~~strike~sss
-
-**hello
-**hello2
-~~strike~~
-hello7
-**
-ignore
-**
-*
-ignore2
-*
+line1~~strike~~
+~~strike~~line2
+line3~~strike~~line4
+line5~~strike~~line6~~strike~~line7
+~~strike
+line8
+line9~~
