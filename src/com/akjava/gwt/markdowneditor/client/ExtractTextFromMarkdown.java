@@ -13,8 +13,11 @@ public class ExtractTextFromMarkdown {
 
 	
 	
-	
+	private boolean isWhitespace(char ch){
+		return ch==' ' || ch=='\t';
+	}
 
+	public static boolean debug;
 	public ExtractedResult extract(String markdown){
 		String[] lines=CSVUtils.splitLinesWithGuava(markdown).toArray(new String[0]);
 		
@@ -96,7 +99,7 @@ public class ExtractTextFromMarkdown {
 				continue;
 			}
 			
-			System.out.println("start-parse-character");
+			if(debug)System.out.println("start-parse-character");
 			
 			String newLine="";
 			for(int j=0;j<line.length();j++){
@@ -107,7 +110,7 @@ public class ExtractTextFromMarkdown {
 					//check until continue
 					for(int k=j+1;k<trimed.length();k++){
 						
-						if(!Character.isWhitespace(trimed.charAt(k))){
+						if(!isWhitespace(trimed.charAt(k))){//because GWT not supported yet,@see https://code.google.com/p/google-web-toolkit/issues/detail?id=1935
 							break;
 						}
 						cotinued=k;
@@ -142,7 +145,7 @@ public class ExtractTextFromMarkdown {
 						
 					}else{
 						//in italic ignore
-						System.out.println("italic:"+line.substring(analyzer.textStart, j+1));
+						if(debug)System.out.println("italic:"+line.substring(analyzer.textStart, j+1));
 					}
 				}else if(analyzer.bold){
 					if(ch=='*'){
@@ -160,10 +163,10 @@ public class ExtractTextFromMarkdown {
 						j=cotinued;
 						analyzer.bold=false;
 						}else{
-							System.out.println("bold:"+line.substring(analyzer.textStart, j+1));
+							if(debug)System.out.println("bold:"+line.substring(analyzer.textStart, j+1));
 						}
 					}else{
-						System.out.println("bold:"+line.substring(analyzer.textStart, j+1));
+						if(debug)System.out.println("bold:"+line.substring(analyzer.textStart, j+1));
 					}
 				}else if(analyzer.strike){
 					if(ch=='~'){
@@ -181,10 +184,10 @@ public class ExtractTextFromMarkdown {
 						j=cotinued;
 						analyzer.strike=false;
 						}else{
-							System.out.println("strike:"+line.substring(analyzer.textStart, j+1));
+							if(debug)System.out.println("strike:"+line.substring(analyzer.textStart, j+1));
 						}
 					}else{
-						System.out.println("strike:"+line.substring(analyzer.textStart, j+1));
+						if(debug)System.out.println("strike:"+line.substring(analyzer.textStart, j+1));
 					}
 				}else if(analyzer.textcode){
 					if(ch=='`'){
@@ -202,10 +205,10 @@ public class ExtractTextFromMarkdown {
 						j=cotinued;
 						analyzer.textcode=false;
 						}else{
-							System.out.println("textcode:"+line.substring(analyzer.textStart, j+1));
+							if(debug)System.out.println("textcode:"+line.substring(analyzer.textStart, j+1));
 						}
 					}else{
-						System.out.println("textcode:"+line.substring(analyzer.textStart, j+1));
+						if(debug)System.out.println("textcode:"+line.substring(analyzer.textStart, j+1));
 					}
 				}else{
 				if(ch=='*'){
@@ -239,10 +242,10 @@ public class ExtractTextFromMarkdown {
 					int length=cotinued-j+1;
 					if(length==1){
 						analyzer.italic=true;
-						System.out.println("italic:"+line.substring(analyzer.textStart, cotinued+1));
+						if(debug)System.out.println("italic:"+line.substring(analyzer.textStart, cotinued+1));
 					}else{
 						analyzer.bold=true;
-						System.out.println("bold:"+line.substring(analyzer.textStart, cotinued+1));
+						if(debug)System.out.println("bold:"+line.substring(analyzer.textStart, cotinued+1));
 					}
 					j=cotinued;//skip here
 				}else if(ch=='~'){
@@ -274,7 +277,7 @@ public class ExtractTextFromMarkdown {
 					int length=cotinued-j+1;
 					if(length>1){
 						analyzer.strike=true;
-						System.out.println("strike:"+line.substring(analyzer.textStart, cotinued+1));
+						if(debug)System.out.println("strike:"+line.substring(analyzer.textStart, cotinued+1));
 					}
 					j=cotinued;//skip here
 					
@@ -307,7 +310,7 @@ public class ExtractTextFromMarkdown {
 					int length=cotinued-j+1;
 					if(length>0){
 						analyzer.textcode=true;
-						System.out.println("textcode:"+line.substring(analyzer.textStart, cotinued+1));
+						if(debug)System.out.println("textcode:"+line.substring(analyzer.textStart, cotinued+1));
 					}
 					j=cotinued;//skip here
 					
@@ -356,7 +359,7 @@ public class ExtractTextFromMarkdown {
 					}
 					if(!findLink){
 					analyzer.text+=ch;
-					System.out.println("safe-text:"+analyzer.text);
+					if(debug)System.out.println("safe-text:"+analyzer.text);
 					}
 				}else if(ch=='!'){
 					boolean findLink=false;
@@ -389,13 +392,13 @@ public class ExtractTextFromMarkdown {
 					}
 					if(!findLink){
 					analyzer.text+=ch;
-					System.out.println("safe-text:"+analyzer.text);
+					if(debug)System.out.println("safe-text:"+analyzer.text);
 					}
 				}
 				else{
 					//safe text
 					analyzer.text+=ch;
-					System.out.println("safe-text:"+analyzer.text);
+					if(debug)System.out.println("safe-text:"+analyzer.text);
 					}
 				}
 			}
@@ -449,18 +452,18 @@ public class ExtractTextFromMarkdown {
 		boolean bold;
 		boolean strike;
 		int valueIndex=1;
-		int lineAt;
+		//int lineAt;
 		int textStart;
-		int textEnd;
+		//int textEnd;
 		boolean textcode;
 		boolean linecode;
 
-		boolean intag;//not support nested tag do search simply..
+		
 		private ExtractedResult extractedResult;
 		public void setLineAt(int at){
-			lineAt=at;
+			//lineAt=at;
 			textStart=0;
-			textEnd=0;
+			//textEnd=0;
 			bold=false;
 			italic=false;
 			strike=false;

@@ -11,7 +11,6 @@ import com.akjava.gwt.lib.client.StorageException;
 import com.akjava.gwt.lib.client.TextSelection;
 import com.akjava.gwt.lib.client.widget.TabInputableTextArea;
 import com.akjava.lib.common.functions.StringFunctions;
-import com.akjava.lib.common.functions.StringFunctions.StringToPreFixAndSuffix;
 import com.akjava.lib.common.predicates.StringPredicates;
 import com.akjava.lib.common.tag.Tag;
 import com.akjava.lib.common.utils.CSVUtils;
@@ -22,6 +21,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -29,28 +29,32 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
-public class MarkdownEditor extends HorizontalPanel {
+public class MarkdownEditor extends SplitLayoutPanel {
 
 	  public static final String KEY_SESSION="markdowneditor_session_value";//for session storage
 	  public static final String KEY_LAST_SESSION_ID="markdowneditor_session_last_session_id";
 	  
 	//private static final String KEY_MARKDOWNEDITOR = "KEY_MARKDOWN_EDITOR";
 	private TextArea textArea;
+	
 	public TextArea getTextArea() {
 		return textArea;
 	}
+	
 
 	private CheckBox autoConvertCheck;
 	private HTML previewHTML;
@@ -66,7 +70,7 @@ public class MarkdownEditor extends HorizontalPanel {
 	
 	private Optional<String> syncHtmlKey=Optional.absent();
 	private Optional<String> syncTextKey=Optional.absent();
-	private TabPanel tab;
+	private TabLayoutPanel rightTabPanel;
 	private VerticalPanel previewPanel;
 	public void setSyncHtmlKey(Optional<String> syncHtmlKey) {
 		this.syncHtmlKey = syncHtmlKey;
@@ -138,52 +142,67 @@ public class MarkdownEditor extends HorizontalPanel {
 	
 	
 	public void setTotalHeightPX(int px){
-		tab.setHeight(px+"px");
-		previewPanel.setHeight(px+"px");
-		htmlArea.setHeight(px+"px");
-		 textArea.setHeight(px+"px");
+	this.setHeight(px+"px");
+	rightTabPanel.setHeight(px+"px");
+	//	previewPanel.setHeight(px+"px");
+	//	htmlArea.setHeight(px+"px");
+	textArea.setHeight((px-80)+"px");
 	}
 
 	private void createRightPanels() {
-		VerticalPanel rightPanel=new VerticalPanel();
+		DockLayoutPanel rightPanel=new DockLayoutPanel(Unit.PX);
+		rightPanel.setSize("100%", "100%");
 		this.add(rightPanel);
 		
 		createOptionArea(rightPanel);
 
-		tab = new TabPanel();
-		rightPanel.add(tab);
-		tab.setSize("560px","600px");
-		createPreviewArea(tab);
-		createHtmlArea(tab);
-		tab.selectTab(0);
+		rightTabPanel = new TabLayoutPanel(40,Unit.PX);
+		rightPanel.add(rightTabPanel);
+		rightTabPanel.setSize("100%","100%");
+		createPreviewArea(rightTabPanel);
+		createHtmlArea(rightTabPanel);
+		rightTabPanel.selectTab(0);
+	}
+	
+	public TabLayoutPanel getRightTabPanel(){
+		return rightTabPanel;
 	}
 
-	private void createPreviewArea(TabPanel tab) {
-		previewPanel = new VerticalPanel();
-		previewPanel.setHeight("600px");
+	private void createPreviewArea(TabLayoutPanel tab) {
+		previewPanel = new VerticalPanel();//really need?
+		previewPanel.setSize("100%","100%");
+		ScrollPanel scroll=new ScrollPanel();
+		scroll.setWidth("100%");
+		previewPanel.add(scroll);
+		scroll.setHeight("100%");
 		previewHTML = new HTML();
-		previewPanel.add(previewHTML);
+		scroll.setWidget(previewHTML);
 		tab.add(previewPanel,"Preview");
 	}
 	
-	private void createHtmlArea(TabPanel tab) {
+	private void createHtmlArea(TabLayoutPanel tab) {
+		VerticalPanel container=new VerticalPanel();
+		container.setSize("100%", "100%");
 		htmlArea = new TextArea();
-		htmlArea.setWidth("560px");
-		htmlArea.setHeight("600px");
-		tab.add(htmlArea,"HTML");
+		htmlArea.setWidth("95%");
+		htmlArea.setHeight("100%");
+		container.add(htmlArea);
+		tab.add(container,"HTML");
 	}
 
 	private void createLeftPanels() {
-		VerticalPanel leftPanel=new VerticalPanel();
-		this.add(leftPanel);
+		DockLayoutPanel leftPanel=new DockLayoutPanel(Unit.PX);
+		
+		leftPanel.setSize("100%", "100%");
+		this.addWest(leftPanel,560);
 		createToolbars(leftPanel);
 		createTextAreas(leftPanel);
 		
 	}
 
-	private void createOptionArea(VerticalPanel parent) {
+	private void createOptionArea(DockLayoutPanel parent) {
 		HorizontalPanel panel=new HorizontalPanel();
-		parent.add(panel);
+		parent.addNorth(panel,40);
 		
 		Button bt=new Button("Convert");
 		bt.addClickHandler(new ClickHandler() {
@@ -199,15 +218,19 @@ public class MarkdownEditor extends HorizontalPanel {
 		panel.add(autoConvertCheck);
 	}
 
-	private void createTextAreas(VerticalPanel parent) {
+	private void createTextAreas(Panel parent) {
+		//VerticalPanel textAreaBase=new VerticalPanel();
+		//textAreaBase.setSize("100%", "100%");
+		//parent.add(textAreaBase);
+		//textAreaBase.setBorderWidth(3);
 		textArea = new TabInputableTextArea();
 		parent.add(textArea);
 		
 		//textArea.setText(storageControler.getValue(KEY_MARKDOWNEDITOR, ""));
 		
 		textArea.setStylePrimaryName("textbg");
-	  	textArea.setWidth("560px");
-	    textArea.setHeight("600px");
+	  	textArea.setWidth("98%");
+	    textArea.setHeight("98%");
 	    textArea.addKeyUpHandler(new KeyUpHandler() {
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
@@ -240,9 +263,11 @@ public class MarkdownEditor extends HorizontalPanel {
 		*/
 	}
 
-	private void createToolbars(VerticalPanel parent) {
+	private void createToolbars(DockLayoutPanel parent) {
 		VerticalPanel panels=new VerticalPanel();
-		parent.add(panels);
+		//panels.setHeight("100px");
+		
+		parent.addNorth(panels,80);
 		HorizontalPanel button1Panel=new HorizontalPanel();
 		panels.add(button1Panel);
 		
@@ -663,8 +688,11 @@ public class MarkdownEditor extends HorizontalPanel {
     		}
     }
 
-    public String getHtml(){
+    public String getHtmlText(){
     	return htmlArea.getText();
+    }
+    public String getMarkdownText(){
+    	return textArea.getText();
     }
     
 	public void doConvert() {

@@ -18,9 +18,7 @@ public class KeyAndUrlUtils {
 		List<KeyAndUrl> lists=FluentIterable.from(CSVUtils.splitLinesWithGuava(text))
 				.filter(StringPredicates.getNotEmpty())
 				.transform(getTextToKeyAndUrlFunction()).toList();
-			for(KeyAndUrl k:lists){
-				System.out.println("keyandurl:"+k);
-			}
+			
 		return Lists.newArrayList(lists);//for sort
 	}
 	
@@ -39,8 +37,14 @@ public class KeyAndUrlUtils {
 		}
 		
 	}
-	
-	public static void insertKeyword(Map<String,String> extractedValues,List<KeyAndUrl> keywords,boolean eachKeyOnlyOnce){
+	public static final boolean EachKeyOnlyOnce=true;
+	/**
+	 * this function do sort
+	 * @param extractedValues
+	 * @param keywords
+	 * @param eachKeyOnlyOnce
+	 */
+	public static void insertKeyAndUrl(Map<String,String> extractedValues,List<KeyAndUrl> keywords,boolean eachKeyOnlyOnce){
 		//reset used
 		for(KeyAndUrl key:keywords){
 			if(key.isUsed()){
@@ -49,21 +53,24 @@ public class KeyAndUrlUtils {
 		}
 		//use keywords directory to cut down time.
 		Collections.sort(keywords);
-		//Collections.reverse(keywords);
+		
 		
 		for(String keyName:extractedValues.keySet()){
 			String value=extractedValues.get(keyName);
-			String newValue=insertKeyword(value,keywords,eachKeyOnlyOnce);
+			String newValue=replaceTextToKeyAndUrl(value,keywords,eachKeyOnlyOnce);
 			extractedValues.put(keyName, newValue);
 		}
 	}
 	/**
+	 * this is totally replace,do extract first
+	 * and sort before by yourself ,usually called insertKeyAndUrl so not sort
+	 * Collections.sort(keywords);
 	 * 
 	 * @param text
 	 * @param keywords must be sorted
 	 * @return
 	 */
-	public static String insertKeyword(String text,List<KeyAndUrl> keywords,boolean eachKeyOnlyOnce){
+	public static String replaceTextToKeyAndUrl(String text,List<KeyAndUrl> keywords,boolean eachKeyOnlyOnce){
 		StringBuilder sbuilder=new StringBuilder();
 		String remainText=text;
         String notMatchText="";
@@ -72,7 +79,7 @@ public class KeyAndUrlUtils {
             FOR:for(int j=0;j<keywords.size();j++){
             	KeyAndUrl keyword=keywords.get(j);
                 if(remainText.startsWith(keyword.getKey())){
-                   System.out.println("mutch:"+keyword);
+                   //System.out.println("mutch:"+keyword);
                     if(notMatchText.length()>0){
                         sbuilder.append(notMatchText);
                     }

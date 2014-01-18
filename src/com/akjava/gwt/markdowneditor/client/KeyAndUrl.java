@@ -1,6 +1,21 @@
 package com.akjava.gwt.markdowneditor.client;
 
+import com.akjava.gwt.lib.client.LogUtils;
 
+/**
+ * for replace
+ * usually read form KeyAndUrlUtils.loadFromCsvText
+ * 
+ * csv format is simplly 
+ * title,url
+ * 
+ * how to replace
+ * but totally limited text can replace it.
+ * @see MarkdownFunctions.MarkdownToKeyAndUrlMarkdown
+ * 
+ * @author aki
+ *
+ */
 public class KeyAndUrl implements Comparable<KeyAndUrl>{
 private boolean used;
 public boolean isUsed() {

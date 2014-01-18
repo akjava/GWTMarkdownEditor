@@ -31,7 +31,7 @@ public class KeywordTest extends TestCase{
 		
 		ExtractedResult extractedResult=extractTextFromMarkdown.extract(markdown);
 		Map<String,String> map=extractedResult.getMarkdownTemplateMap();
-		KeyAndUrlUtils.insertKeyword(map, keyAndUrls, eachKeyOnlyOnce);
+		KeyAndUrlUtils.insertKeyAndUrl(map, keyAndUrls, eachKeyOnlyOnce);
 		
 		//System.out.println(extractedResult.getExtractedMarkdownTemplateText());
 		
@@ -46,4 +46,12 @@ public class KeywordTest extends TestCase{
 	public void test1false(){
 		doTest("test1b",false);
 	}
+	
+	public void test2(){
+		doTest("test2",true);
+	}
+	public void test2b(){
+		doTest("test2",false);
+	}
+	
 }
