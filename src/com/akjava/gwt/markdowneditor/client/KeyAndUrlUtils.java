@@ -8,7 +8,6 @@ import com.akjava.lib.common.predicates.StringPredicates;
 import com.akjava.lib.common.utils.CSVUtils;
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 
@@ -37,6 +36,30 @@ public class KeyAndUrlUtils {
 		}
 		
 	}
+	
+	
+	public static class SamePageReplaceWithoutLinkFunction implements Function<KeyAndUrl,KeyAndUrl>{
+		private String targetPath;
+
+		public SamePageReplaceWithoutLinkFunction(String targetPath) {
+			super();
+			this.targetPath = targetPath;
+		}
+
+		@Override
+		public KeyAndUrl apply(KeyAndUrl input) {
+			if(input.getUrl().equals(targetPath)){
+				input.setReplaceWithoutLink(true);
+			}else{
+				input.setReplaceWithoutLink(false);
+			}
+			return input;
+		}
+
+		
+		
+	}
+	
 	public static final boolean EachKeyOnlyOnce=true;
 	/**
 	 * this function do sort
@@ -84,7 +107,7 @@ public class KeyAndUrlUtils {
                         sbuilder.append(notMatchText);
                     }
                   
-                    if(eachKeyOnlyOnce && keyword.isUsed()){
+                    if((eachKeyOnlyOnce && keyword.isUsed())||keyword.isReplaceWithoutLink() ){
                     	 sbuilder.append(keyword.getKey());//add as plain
                     }else{
                     	 sbuilder.append(MarkdownUtils.createLink(keyword.getKey(), keyword.getUrl()));

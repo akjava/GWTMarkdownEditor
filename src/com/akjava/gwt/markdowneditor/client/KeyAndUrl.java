@@ -18,6 +18,17 @@ import com.akjava.gwt.lib.client.LogUtils;
  */
 public class KeyAndUrl implements Comparable<KeyAndUrl>{
 private boolean used;
+private boolean replaceWithoutLink;
+
+/*
+ * the key-url is not completed or same path
+ */
+public boolean isReplaceWithoutLink() {
+	return replaceWithoutLink;
+}
+public void setReplaceWithoutLink(boolean replaceWithoutLink) {
+	this.replaceWithoutLink = replaceWithoutLink;
+}
 public boolean isUsed() {
 	return used;
 }
