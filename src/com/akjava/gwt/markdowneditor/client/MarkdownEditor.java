@@ -267,7 +267,7 @@ public class MarkdownEditor extends SplitLayoutPanel {
 		VerticalPanel panels=new VerticalPanel();
 		//panels.setHeight("100px");
 		
-		parent.addNorth(panels,80);
+		parent.addNorth(panels,60);
 		HorizontalPanel button1Panel=new HorizontalPanel();
 		panels.add(button1Panel);
 		
@@ -395,6 +395,27 @@ public class MarkdownEditor extends SplitLayoutPanel {
 		});
 		LinkBt.setTitle("Insert a URL");
 		button1Panel.add(LinkBt);
+		
+		Button alinkBt=new Button("Alink",new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
+					String selected=selection.getSelection();
+					String url=Window.prompt("Link URL", "http://");
+					if(url==null){//cancel
+						return;
+					}
+					String newText="<a href='"+url+"'>"+selected+"</a>";
+					
+					selection.replace(newText);
+					onTextAreaUpdate();
+				}
+				}
+		});
+		alinkBt.setTitle("Insert a URL with alink");
+		button1Panel.add(alinkBt);
+		
 		Button ImageBt=new Button("Image",new ClickHandler() {
 			
 			@Override
@@ -540,7 +561,71 @@ public class MarkdownEditor extends SplitLayoutPanel {
 		imageListBox.setSelectedIndex(imageListBox.getItemCount()-1);//default empty
 		button2Panel.add(imageListBox);
 		
+		
+		button2Panel.add(new Button("Undo", new ClickHandler() {//TODO better
+			
+
+				@Override
+				public void onClick(ClickEvent event) {
+					
+					int undoIndex=historyIndex-1;
+					if(undoIndex<0){
+						return;
+					}
+						
+					String text=textHistory.get(undoIndex);
+					textArea.setText(text);
+					lastHistory=text;
+					historyIndex--;
+					if(historyIndex<0){
+						historyIndex=0;
+					}
+					onTextAreaUpdate();
+				}
+			}));
+		button2Panel.add(new Button("Redo", new ClickHandler() {
+			
+
+				@Override
+				public void onClick(ClickEvent event) {
+					if(historyIndex<textHistory.size()){
+						int redoIndex=historyIndex+1;
+						if(redoIndex>=textHistory.size()){
+							return;
+						}
+						String text=textHistory.get(redoIndex);
+						textArea.setText(text);
+						lastHistory=text;
+						historyIndex++;
+						if(historyIndex>=textHistory.size()){
+							historyIndex=textHistory.size()-1;
+						}
+						onTextAreaUpdate();
+					}
+				}
+			}));
+		
 	}
+	public void clearHistory(){
+		lastHistory=null;
+		textHistory.clear();
+		historyIndex=0;
+	}
+    public void addHistory(String text){
+    	if(text.equals(lastHistory)){
+    		return;
+    	}
+    	textHistory.add(text);
+    	lastHistory=text;
+    	//GWT.log("add history:"+text);
+    	if(textHistory.size()>1000){
+    		textHistory.remove(0);
+    	}
+    	historyIndex=textHistory.size()-1;
+    }
+	private List<String> textHistory=new ArrayList<String>();
+	private int historyIndex;
+	private String lastHistory;
 	
 	protected void imageSelected(int width) {
 		String url=Window.prompt("Image URL", "");
@@ -656,6 +741,7 @@ public class MarkdownEditor extends SplitLayoutPanel {
 	}
 	
 	public void onTextAreaUpdate(){
+		addHistory(textArea.getText());//full backup
 		if(autoConvertCheck.getValue()){
 			doConvert();
 		}else{
@@ -695,11 +781,17 @@ public class MarkdownEditor extends SplitLayoutPanel {
     	return textArea.getText();
     }
     
+    public String getHeader(){
+    	return "";
+    	}
+    public String getFooter(){
+    	return "";
+    	}
 	public void doConvert() {
 		String text=textArea.getText();
 		String html=Marked.marked(text);
 		htmlArea.setText(html);
-		previewHTML.setHTML(html);	
+		previewHTML.setHTML(getHeader()+html+getFooter());	
 	}
 	public HTML getPreviewHTML() {
 		return previewHTML;
