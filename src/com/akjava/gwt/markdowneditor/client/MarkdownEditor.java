@@ -363,7 +363,7 @@ public class MarkdownEditor extends SplitLayoutPanel {
 		blockBt.setTitle("Add a Blockquote");
 		button1Panel.add(blockBt);
 		
-		Button lineBt=new Button("Line",new ClickHandler() {
+		Button lineBt=new Button("HR",new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
@@ -373,7 +373,7 @@ public class MarkdownEditor extends SplitLayoutPanel {
 				}
 				}
 		});
-		lineBt.setTitle("Insert a Line");
+		lineBt.setTitle("Insert a horizontail Line");
 		button1Panel.add(lineBt);
 		
 		Button LinkBt=new Button("URL",new ClickHandler() {
@@ -396,7 +396,7 @@ public class MarkdownEditor extends SplitLayoutPanel {
 		LinkBt.setTitle("Insert a URL");
 		button1Panel.add(LinkBt);
 		
-		Button alinkBt=new Button("Alink",new ClickHandler() {
+		Button alinkBt=new Button("Atag",new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
@@ -416,7 +416,7 @@ public class MarkdownEditor extends SplitLayoutPanel {
 		alinkBt.setTitle("Insert a URL with alink");
 		button1Panel.add(alinkBt);
 		
-		Button ImageBt=new Button("Image",new ClickHandler() {
+		Button ImageBt=new Button("IMG",new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
@@ -457,6 +457,28 @@ public class MarkdownEditor extends SplitLayoutPanel {
 		});
 		ListBt.setTitle("Convert to List");
 		button1Panel.add(ListBt);
+		
+		Button numberListBt=new Button("Nist",new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
+					String selected=selection.getSelection();
+					
+					List<String> converted=FluentIterable
+					.from(Arrays.asList(selected.split("\n")))
+					.filter(StringPredicates.getNotEmpty())
+					.transform(new StringFunctions.StringToPreFixAndSuffixWithLineNumber(1,"${value}. ",""))
+					.toList();
+					
+					selection.replace(Joiner.on("\n").join(converted));
+					
+					onTextAreaUpdate();
+				}
+				}
+		});
+		numberListBt.setTitle("Convert to Number List");
+		button1Panel.add(numberListBt);
 		
 		Button tableBt=new Button("Tab2Table",new ClickHandler() {
 			
