@@ -431,6 +431,12 @@ public class MarkdownEditor extends SplitLayoutPanel {
 			public void onClick(ClickEvent event) {
 				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
 					String selected=selection.getSelection();
+					if(selected.endsWith(".jpg")||selected.endsWith(".png")){
+						String newText="!["+""+"]"+"("+selected+")";
+						
+						selection.replace(newText);
+						onTextAreaUpdate();
+					}else{
 					String url=Window.prompt("Image URL", "");
 					if(url==null){//cancel
 						return;
@@ -439,6 +445,7 @@ public class MarkdownEditor extends SplitLayoutPanel {
 					
 					selection.replace(newText);
 					onTextAreaUpdate();
+					}
 				}
 				}
 		});
@@ -636,6 +643,30 @@ public class MarkdownEditor extends SplitLayoutPanel {
 				}
 			}));
 		
+		button2Panel.add(new Button("Paste", new ClickHandler() {
+			
+
+			@Override
+			public void onClick(ClickEvent event) {
+				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
+					if(copiedText!=null){
+						insertBetweenSelectionText(selection,copiedText,"");	
+						onTextAreaUpdate();
+					}
+				}
+					
+					
+			}
+		}));
+		
+	}
+	
+	private String copiedText;
+	public String getCopiedText() {
+		return copiedText;
+	}
+	public void setCopiedText(String copiedText) {
+		this.copiedText = copiedText;
 	}
 	public void clearHistory(){
 		lastHistory=null;
