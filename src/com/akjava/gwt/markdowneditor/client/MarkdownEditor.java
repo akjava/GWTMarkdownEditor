@@ -215,6 +215,15 @@ public class MarkdownEditor extends SplitLayoutPanel {
 		
 		autoConvertCheck = new CheckBox("auto");
 		autoConvertCheck.setValue(true);
+		autoConvertCheck.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				if(autoConvertCheck.getValue()){
+					onTextAreaUpdate();
+				}
+			}
+		});
 		panel.add(autoConvertCheck);
 	}
 

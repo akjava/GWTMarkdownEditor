@@ -110,8 +110,13 @@ public class KeyAndUrlUtils {
                     if((eachKeyOnlyOnce && keyword.isUsed())||keyword.isReplaceWithoutLink() ){
                     	 sbuilder.append(keyword.getKey());//add as plain
                     }else{
+                    	if(keyword.getUrl().isEmpty()){
+                    		 sbuilder.append(MarkdownUtils.createItalic(keyword.getKey()));
+                        	 keyword.setUsed(true);
+                    	}else{
                     	 sbuilder.append(MarkdownUtils.createLink(keyword.getKey(), keyword.getUrl()));
                     	 keyword.setUsed(true);
+                    	}
                     }
                     notMatchText="";
                     remainText=remainText.substring(keyword.getKey().length());

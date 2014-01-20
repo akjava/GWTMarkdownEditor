@@ -15,6 +15,13 @@ public static String createLink(String title,String url){
 	return "["+title+"]"+"("+url+")";
 }
 
+public static String createItalic(String title){
+	if(title==null){
+		title="";
+	}
+	return "*"+title+"*";
+}
+
 public static String createImage(String title,String url){
 	if(title==null){
 		title="";
