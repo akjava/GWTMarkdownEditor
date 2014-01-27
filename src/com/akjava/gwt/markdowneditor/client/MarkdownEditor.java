@@ -40,7 +40,6 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 public class MarkdownEditor extends SplitLayoutPanel {
@@ -80,6 +79,19 @@ public class MarkdownEditor extends SplitLayoutPanel {
 	}
 	public MarkdownEditor(){
 		this(false,"","");
+	}
+	
+	public static final String MD_EDITOR_COPIED_TEXT="system_copied_text";
+	public void copyText(String text) {
+		try {
+			storageControler.setValue(MD_EDITOR_COPIED_TEXT, text);
+		} catch (StorageException e) {
+			Window.alert(e.getMessage());
+			e.printStackTrace();
+		}	
+	}
+	public String getCopiedText(){
+		return storageControler.getValue(MD_EDITOR_COPIED_TEXT,"");
 	}
 	/**
 	 * 
@@ -649,7 +661,9 @@ public class MarkdownEditor extends SplitLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
-					if(copiedText!=null){
+					String copiedText=getCopiedText();
+					
+					if(!Strings.isNullOrEmpty(copiedText)){
 						insertBetweenSelectionText(selection,copiedText,"");	
 						onTextAreaUpdate();
 					}
@@ -661,13 +675,8 @@ public class MarkdownEditor extends SplitLayoutPanel {
 		
 	}
 	
-	private String copiedText;
-	public String getCopiedText() {
-		return copiedText;
-	}
-	public void setCopiedText(String copiedText) {
-		this.copiedText = copiedText;
-	}
+
+
 	public void clearHistory(){
 		lastHistory=null;
 		textHistory.clear();

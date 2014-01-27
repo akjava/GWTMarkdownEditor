@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.akjava.gwt.lib.client.LogUtils;
 import com.akjava.lib.common.utils.CSVUtils;
+import com.akjava.lib.common.utils.StringUtils;
 import com.google.common.base.Joiner;
 
 public class ExtractTextFromMarkdown {
@@ -63,9 +64,15 @@ public class ExtractTextFromMarkdown {
 			}
 			
 			String trimed=line.trim();
-			if(trimed.startsWith(">")){
-				passStrings.add(line);
-				continue;
+			if(line.startsWith(">")){
+				//do it later
+				//passStrings.add(line);
+				//continue;
+			}else{
+				if(line.indexOf("<")!=-1 && line.indexOf(">")!=-1){
+					passStrings.add(line);
+					continue;
+				}
 			}
 			
 			if(trimed.startsWith("***")){
@@ -75,10 +82,7 @@ public class ExtractTextFromMarkdown {
 			
 			
 			//remove possible tag
-			if(line.indexOf("<")!=-1 && line.indexOf(">")!=-1){
-				passStrings.add(line);
-				continue;
-			}
+			
 			
 			//ignore title
 			if(MarkdownPredicates.getStartWithTitleLinePredicate().apply(line)){
@@ -103,6 +107,18 @@ public class ExtractTextFromMarkdown {
 			
 			String newLine="";
 			for(int j=0;j<line.length();j++){
+				//
+				
+				if(j==0){
+				int match=StringUtils.countStartWith(line,'>');
+				//LogUtils.log("match:"+match+","+line);
+					if(match>0){
+						
+						j=match;
+						newLine+=line.substring(0,match);
+						LogUtils.log(newLine);
+					}
+				}
 				
 				//skip-list
 				if(j==0 && trimed.startsWith("-")){

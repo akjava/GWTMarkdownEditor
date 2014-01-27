@@ -36,9 +36,20 @@ public void setUsed(boolean used) {
 	this.used = used;
 }
 private String key;
-public KeyAndUrl(String key, String url) {
+private String icon;//fontawaeasome icon
+public String getIcon() {
+	return icon;
+}
+public void setIcon(String icon) {
+	this.icon = icon;
+}
+public KeyAndUrl(String key, String url,String icon) {
 	this.key=key;
 	this.url=url;
+	this.icon=icon;
+}
+public KeyAndUrl(String key, String url) {
+	this(key,url,null);
 }
 public String getKey() {
 	return key;

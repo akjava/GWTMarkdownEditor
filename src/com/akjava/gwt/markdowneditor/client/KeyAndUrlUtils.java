@@ -7,7 +7,9 @@ import java.util.Map;
 import com.akjava.lib.common.predicates.StringPredicates;
 import com.akjava.lib.common.utils.CSVUtils;
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 
@@ -26,18 +28,24 @@ public class KeyAndUrlUtils {
 	}
 	public enum  TextToKeyAndUrlFunction implements Function<String,KeyAndUrl>{
 		INSTANCE;
-		private  Splitter splitter=Splitter.on(",").limit(2);
+		private  Splitter splitter=Splitter.on(",").limit(3);//now support icon
 		@Override
 		public KeyAndUrl apply(String input) {
 			List<String> values=Lists.newArrayList(splitter.split(input));
 			String key=values.get(0);//must be
 			String url=values.size()>1?values.get(1):"#";
-			return new KeyAndUrl(key,url);
+			String icon=values.size()>2?values.get(2):null;
+			return new KeyAndUrl(key,url,icon);
 		}
 		
 	}
 	
-	
+	/**
+	 * same path should not replaced,but need exist otherwise other key replace it.
+	 * so set setReplaceWithoutLink(false) to avoid exec final replace
+	 * @author aki
+	 *
+	 */
 	public static class SamePageReplaceWithoutLinkFunction implements Function<KeyAndUrl,KeyAndUrl>{
 		private String targetPath;
 
@@ -84,6 +92,15 @@ public class KeyAndUrlUtils {
 			extractedValues.put(keyName, newValue);
 		}
 	}
+	
+	public static String createIconLink(String icon){
+		if(Strings.isNullOrEmpty(icon)){
+			return "";
+		}else{
+			return "<i class=\""+icon+"\"></i>";
+		}
+	}
+	
 	/**
 	 * this is totally replace,do extract first
 	 * and sort before by yourself ,usually called insertKeyAndUrl so not sort
@@ -114,7 +131,7 @@ public class KeyAndUrlUtils {
                     		 sbuilder.append(MarkdownUtils.createItalic(keyword.getKey()));
                         	 keyword.setUsed(true);
                     	}else{
-                    	 sbuilder.append(MarkdownUtils.createLink(keyword.getKey(), keyword.getUrl()));
+                    	 sbuilder.append(createIconLink(keyword.getIcon())+MarkdownUtils.createLink(keyword.getKey(), keyword.getUrl()));
                     	 keyword.setUsed(true);
                     	}
                     }
