@@ -64,7 +64,8 @@ public class MarkdownEditor extends SplitLayoutPanel {
 
 	private ListBox titleLevelBox;
 
-	private StorageControler storageControler=new StorageControler(false);//use session
+	private StorageControler sessionControler=new StorageControler(false);//use session
+	private StorageControler localControler=new StorageControler(true);//use session
 	private ListBox imageListBox;
 	
 	private Optional<String> syncHtmlKey=Optional.absent();
@@ -84,14 +85,14 @@ public class MarkdownEditor extends SplitLayoutPanel {
 	public static final String MD_EDITOR_COPIED_TEXT="system_copied_text";
 	public void copyText(String text) {
 		try {
-			storageControler.setValue(MD_EDITOR_COPIED_TEXT, text);
+			localControler.setValue(MD_EDITOR_COPIED_TEXT, text);
 		} catch (StorageException e) {
 			Window.alert(e.getMessage());
 			e.printStackTrace();
 		}	
 	}
 	public String getCopiedText(){
-		return storageControler.getValue(MD_EDITOR_COPIED_TEXT,"");
+		return localControler.getValue(MD_EDITOR_COPIED_TEXT,"");
 	}
 	/**
 	 * 
@@ -121,18 +122,18 @@ public class MarkdownEditor extends SplitLayoutPanel {
 		 */
 		 if(!session_id.isEmpty()){
 	        	try {
-	        		String lastSessionId = storageControler.getValue(KEY_LAST_SESSION_ID, "");
+	        		String lastSessionId = sessionControler.getValue(KEY_LAST_SESSION_ID, "");
 	        		GWT.log("gwtwiki:lastSessionId="+lastSessionId+",session_id="+session_id);
 	        		if(!session_id.equals(lastSessionId)){
 	        			//new situation
 	        			GWT.log("gwtwiki:different session id,get initial value from PEOPERTY_DEFAULT_ID");
 	        			//String data=ValueUtils.getFormValueById(PEOPERTY_DEFAULT_ID, "");
 	    		        textArea.setText(defaultValue);
-	    		        storageControler.setValue(KEY_SESSION,defaultValue);
-	    		        storageControler.setValue(KEY_LAST_SESSION_ID, session_id);//mark used
+	    		        sessionControler.setValue(KEY_SESSION,defaultValue);
+	    		        sessionControler.setValue(KEY_LAST_SESSION_ID, session_id);//mark used
 	        		}else{
 	        			GWT.log("gwtwiki:use last modified value");
-	        			String lastModified=storageControler.getValue(KEY_SESSION, "");
+	        			String lastModified=sessionControler.getValue(KEY_SESSION, "");
 	        			textArea.setText(lastModified);
 	        		}
 				} catch (StorageException e) {
@@ -839,7 +840,7 @@ public class MarkdownEditor extends SplitLayoutPanel {
     		
     		//store to session-storage for back-button
     		try {
-    			storageControler.setValue(KEY_SESSION, textArea.getText());
+    			sessionControler.setValue(KEY_SESSION, textArea.getText());
     		} catch (StorageException e) {
     			e.printStackTrace();
     		}
