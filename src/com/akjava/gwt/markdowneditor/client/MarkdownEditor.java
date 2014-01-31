@@ -845,6 +845,11 @@ public class MarkdownEditor extends SplitLayoutPanel {
     			e.printStackTrace();
     		}
     }
+    
+    public String getSessionValue(){
+    	return sessionControler.getValue(KEY_SESSION,"");
+    }
+    
 
     public String getHtmlText(){
     	return htmlArea.getText();

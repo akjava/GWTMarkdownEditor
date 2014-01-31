@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.akjava.gwt.lib.client.LogUtils;
+
 import com.akjava.lib.common.utils.CSVUtils;
 import com.akjava.lib.common.utils.StringUtils;
 import com.google.common.base.Joiner;
@@ -116,7 +116,7 @@ public class ExtractTextFromMarkdown {
 						
 						j=match;
 						newLine+=line.substring(0,match);
-						LogUtils.log(newLine);
+						
 					}
 				}
 				
@@ -347,10 +347,11 @@ public class ExtractTextFromMarkdown {
 					}
 					newLine+='|';//just skip
 				}else if(ch=='['){
+					//LogUtils.log("["+line);
 					boolean findLink=false;
 					int connection=line.indexOf("](",j+1);
 					if(connection!=-1){
-						int end=line.indexOf(")");
+						int end=line.indexOf(")",connection);
 						if(end!=-1){//find link
 							//make key
 							String safeText=analyzer.text;

@@ -1,0 +1,2 @@
+[[公式サイトのSearch API Price(2014.01.31版)](https://cloud.google.com/products/app-engine/#pricing)
+[一度作成したSearch-Indexを削除する方法は無さそうです。 (将来修正されるでしょう:[stackoverflow質問](http://stackoverflow.com/questions/21470134/how-to-delete-a-search-index-itself)　および　[公式issue](https://code.google.com/p/googleappengine/issues/detail?id=8235)を確認してみてください。) 

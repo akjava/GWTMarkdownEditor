@@ -84,6 +84,7 @@ private ExtractTextFromMarkdown extractTextFromMarkdown=new ExtractTextFromMarkd
 		doTestTemplate("test10");
 	}
 	
+	/*
 	public void testMix1(){
 		doTest("test11");
 	}
@@ -96,6 +97,14 @@ private ExtractTextFromMarkdown extractTextFromMarkdown=new ExtractTextFromMarkd
 	}
 	public void testMix2Template(){
 		doTestTemplate("test12");
+	}
+	*/
+	
+	public void testReal1(){
+		doTest("real1");
+	}
+	public void testReal2(){
+		doTestTemplate("real1");
 	}
 	
 	private void doTest(String key) {
