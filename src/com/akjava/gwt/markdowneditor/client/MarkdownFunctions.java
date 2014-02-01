@@ -2,15 +2,12 @@ package com.akjava.gwt.markdowneditor.client;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.akjava.gwt.lib.client.datalist.RichTitle;
 import com.akjava.gwt.lib.client.datalist.SimpleTextData;
-import com.akjava.gwt.markdowneditor.client.ExtractTextFromMarkdown.ExtractedResult;
 import com.akjava.lib.common.functions.StringFunctions;
 import com.akjava.lib.common.functions.StringFunctions.StringToPreFixAndSuffix;
 import com.akjava.lib.common.utils.FileNames;
-import com.akjava.lib.common.utils.TemplateUtils;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -62,6 +59,7 @@ public class MarkdownFunctions {
 		public MarkdownToKeyAndUrlMarkdown(List<KeyAndUrl> keyAndUrls,boolean eachKeyOnlyOnce){
 			this.keyAndUrls=keyAndUrls;
 			this.eachKeyOnlyOnce=eachKeyOnlyOnce;
+			
 		}
 		@Override
 		public String apply(String input) {

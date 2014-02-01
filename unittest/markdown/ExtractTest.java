@@ -84,6 +84,13 @@ private ExtractTextFromMarkdown extractTextFromMarkdown=new ExtractTextFromMarkd
 		doTestTemplate("test10");
 	}
 	
+	public void testCoverage(){
+		doTest("test13");
+	}
+	public void testCoverageTemplate(){
+		doTestTemplate("test13");
+	}
+	
 	/*
 	public void testMix1(){
 		doTest("test11");
@@ -100,12 +107,14 @@ private ExtractTextFromMarkdown extractTextFromMarkdown=new ExtractTextFromMarkd
 	}
 	*/
 	
+	/*
 	public void testReal1(){
 		doTest("real1");
 	}
 	public void testReal2(){
 		doTestTemplate("real1");
 	}
+	*/
 	
 	private void doTest(String key) {
 		String markdown=IOUtils.readResourceAsUTF8Text("markdown/resources/"+key+".md");

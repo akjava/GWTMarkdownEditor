@@ -3,9 +3,11 @@ package com.akjava.gwt.markdowneditor.client;
 import java.util.List;
 import java.util.Map;
 
+import com.akjava.gwt.lib.client.GWTJSLogger;
 import com.akjava.gwt.lib.client.LogUtils;
 import com.akjava.gwt.markdowneditor.client.ExtractTextFromMarkdown.ExtractedResult;
 import com.akjava.lib.common.utils.TemplateUtils;
+import com.akjava.lib.common.utils.log.GWTLogger;
 
 public class MarkdownUtils {
 private MarkdownUtils(){}
@@ -30,14 +32,17 @@ public static String createImage(String title,String url){
 	return "!["+title+"]"+"("+url+")";
 }
 
+
+
+
 public static String markdownToKeyAndUrlMarkdown(ExtractTextFromMarkdown extractTextFromMarkdown,List<KeyAndUrl> keyAndUrls,boolean eachKeyOnlyOnce,String markdownText){
-	LogUtils.log("ready-extract");
+	extractTextFromMarkdown.setLogger(new GWTJSLogger());
 	ExtractedResult extractedResult=extractTextFromMarkdown.extract(markdownText);
-	LogUtils.log("before-extract");
+	
+			
 	Map<String,String> map=extractedResult.getMarkdownTemplateMap();
-	LogUtils.log("done-extract");
 	KeyAndUrlUtils.insertKeyAndUrl(map, keyAndUrls, eachKeyOnlyOnce);
-	LogUtils.log("inserted");
+
 	return TemplateUtils.createText(extractedResult.getExtractedMarkdownTemplateText(), map);
 }
 

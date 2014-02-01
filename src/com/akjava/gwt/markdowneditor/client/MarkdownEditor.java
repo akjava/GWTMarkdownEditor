@@ -844,7 +844,24 @@ public class MarkdownEditor extends SplitLayoutPanel {
     		} catch (StorageException e) {
     			e.printStackTrace();
     		}
+    		
+    		if(syncOutputListener!=null){
+    			syncOutputListener.syncOutput(textArea.getText());
+    		}
     }
+    
+    SyncOutputListener syncOutputListener;
+    public SyncOutputListener getSyncOutputListener() {
+		return syncOutputListener;
+	}
+	public void setSyncOutputListener(SyncOutputListener syncOutputListener) {
+		this.syncOutputListener = syncOutputListener;
+	}
+
+	public static interface SyncOutputListener{
+    	public void syncOutput(String text);
+    }
+    
     
     public String getSessionValue(){
     	return sessionControler.getValue(KEY_SESSION,"");

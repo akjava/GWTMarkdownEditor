@@ -5,15 +5,23 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import com.akjava.lib.common.utils.CSVUtils;
 import com.akjava.lib.common.utils.StringUtils;
+import com.akjava.lib.common.utils.log.GWTLogger;
 import com.google.common.base.Joiner;
 
 public class ExtractTextFromMarkdown {
+private  GWTLogger logger;
+	
+	
+	public GWTLogger getLogger() {
+	return logger;
+}
 
-	
-	
+public void setLogger(GWTLogger logger) {
+	this.logger = logger;
+}
+
 	private boolean isWhitespace(char ch){
 		return ch==' ' || ch=='\t';
 	}
@@ -28,8 +36,11 @@ public class ExtractTextFromMarkdown {
 		Analyzer analyzer=new Analyzer();
 		List<String> passStrings=new ArrayList<String>();
 		for(int i=0;i<lines.length;i++){
-			String line=lines[i];
 			
+			String line=lines[i];
+			if(logger!=null){
+				logger.log("extract:"+line);
+			}
 			String next=null;
 			if(i<lines.length-1){
 				next=lines[i+1];
@@ -351,6 +362,7 @@ public class ExtractTextFromMarkdown {
 					boolean findLink=false;
 					int connection=line.indexOf("](",j+1);
 					if(connection!=-1){
+						//int end=line.indexOf(")");//bug version to test catch error
 						int end=line.indexOf(")",connection);
 						if(end!=-1){//find link
 							//make key
