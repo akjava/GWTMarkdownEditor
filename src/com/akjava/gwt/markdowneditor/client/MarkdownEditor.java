@@ -15,6 +15,7 @@ import com.akjava.lib.common.predicates.StringPredicates;
 import com.akjava.lib.common.tag.Tag;
 import com.akjava.lib.common.utils.CSVUtils;
 import com.akjava.lib.common.utils.ValuesUtils;
+import com.google.common.base.Ascii;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
@@ -885,8 +886,51 @@ public class MarkdownEditor extends SplitLayoutPanel {
 		String text=textArea.getText();
 		String html=Marked.marked(text);
 		htmlArea.setText(html);
+		
+		//kill meta
+		int index=html.indexOf("<meta");
+		if(index!=-1){
+			int end=html.indexOf(">",index+1);
+			if(end!=-1){
+				html=html.substring(0,index)+"&lt;"+html.substring(index+1,end)+"/&gt;"+html.substring(end+1);
+			}
+		}
+		
+		//LogUtils.log(html);
+	
+		
 		previewHTML.setHTML(getHeader()+html+getFooter());	
 	}
+	
+	public boolean validHtmlHeader(String header){
+		String lower=header.toLowerCase();
+		if(lower.indexOf("<body")==-1){
+			return false;
+		}
+		if(lower.indexOf("<head")==-1){
+			return false;
+		}
+		if(lower.indexOf("</head>")==-1){
+			return false;
+		}
+		if(lower.indexOf("<html")==-1){
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean validHtmlFooter(String header){
+		String lower=header.toLowerCase();
+		if(lower.indexOf("</body>")==-1){
+			return false;
+		}
+		if(lower.indexOf("</html>")==-1){
+			return false;
+		}
+		
+		return true;
+	}
+	
 	public HTML getPreviewHTML() {
 		return previewHTML;
 	}
