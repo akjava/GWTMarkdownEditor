@@ -2,7 +2,9 @@ package com.akjava.gwt.markdowneditor.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.akjava.gwt.lib.client.GWTHTMLUtils;
 import com.akjava.gwt.lib.client.LogUtils;
@@ -14,13 +16,16 @@ import com.akjava.lib.common.functions.StringFunctions;
 import com.akjava.lib.common.predicates.StringPredicates;
 import com.akjava.lib.common.tag.Tag;
 import com.akjava.lib.common.utils.CSVUtils;
+import com.akjava.lib.common.utils.TagUtil;
 import com.akjava.lib.common.utils.ValuesUtils;
-import com.google.common.base.Ascii;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -36,6 +41,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -189,8 +195,12 @@ public class MarkdownEditor extends SplitLayoutPanel {
 		scroll.setWidth("100%");
 		previewPanel.add(scroll);
 		scroll.setHeight("100%");
+		
 		previewHTML = new HTML();
-		scroll.setWidget(previewHTML);
+		
+		//scroll.setWidget(previewHTML);
+		scroll.setWidget(htmlContainer);
+		
 		tab.add(previewPanel,"Preview");
 	}
 	
@@ -896,11 +906,87 @@ public class MarkdownEditor extends SplitLayoutPanel {
 			}
 		}
 		
-		//LogUtils.log(html);
 	
+		htmlContainer.clear();
 		
-		previewHTML.setHTML(getHeader()+html+getFooter());	
+		List<Image> usedList=new ArrayList<Image>();
+		
+		List<String> htmls=splitHtml(getHeader()+html+getFooter());
+		for(String tag:htmls){
+			if(tag.startsWith("<img ")){
+				//HTML imgHtml=htmlMap.get(ht);
+				Map<String,String> attr=TagUtil.getAttribute(tag);
+				String src=attr.get("src");
+				if(src!=null){
+					
+					
+					
+					List<Image> cacheList=Lists.newArrayList(imageMap.get(src));
+					Image img=null;
+					for(Image cacheImage:cacheList){
+						if(!usedList.contains(cacheImage)){
+							img=cacheImage;
+							break;
+						}
+					}
+					
+					if(img==null){
+						img=new Image(src);
+						imageMap.put(src, img);
+					}
+					
+					usedList.add(img);
+					
+					htmlContainer.add(img);
+				}else{
+					LogUtils.log("invalid image:"+tag);
+				}
+			}else{
+				htmlContainer.add(new HTML(tag));
+			}
+		}
+		
+		
+		
+		
+		//previewHTML.getElement().setInnerHTML(getHeader()+html+getFooter());
+		//previewHTML.setHTML(getHeader()+html+getFooter());	
 	}
+	VerticalPanel htmlContainer=new VerticalPanel();
+	
+	private List<String> splitHtml(String html){
+		List<String> htmls=new ArrayList<String>();
+		
+		int index=html.indexOf("<img ");
+		do{
+			
+			if(index==-1){
+				break;
+			}
+			
+			String sub=html.substring(0,index);
+			htmls.add(sub);
+			int end=html.indexOf(">", index);
+			if(end==-1){
+				html=html.substring(index);//invalid text
+				break;
+			}else{
+				String img=html.substring(index,end+1);
+				htmls.add(img);
+				html=html.substring(end+1);
+			}
+			
+			index=html.indexOf("<img ");
+		}while(index!=-1);
+		
+		//add remain
+		htmls.add(html);
+		
+		return htmls;
+	}
+	
+	
+	private Multimap<String,Image> imageMap=HashMultimap.create();
 	
 	public boolean validHtmlHeader(String header){
 		String lower=header.toLowerCase();
