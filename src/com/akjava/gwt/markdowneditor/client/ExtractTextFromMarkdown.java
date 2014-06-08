@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.akjava.gwt.lib.client.LogUtils;
 import com.akjava.gwt.markdowneditor.client.MarkdownPredicates.StartWithTitle1OrTitle2Predicate;
 import com.akjava.lib.common.utils.CSVUtils;
 import com.akjava.lib.common.utils.StringUtils;
@@ -31,7 +32,7 @@ public void setLogger(GWTLogger logger) {
 	public ExtractedResult extract(String markdown){
 		return extract(markdown,false);
 	}
-	public ExtractedResult extract(String markdown,boolean parseHeader){
+	public ExtractedResult extract(String markdown,boolean parseAll){
 		String[] lines=CSVUtils.splitLinesWithGuava(markdown).toArray(new String[0]);
 		
 		ExtractedResult result=new ExtractedResult();
@@ -172,7 +173,20 @@ public void setLogger(GWTLogger logger) {
 						//int length=cotinued-j+1;
 						j=cotinued;//skip here
 						
-						newLine+=line.substring(analyzer.textStart,cotinued+1);
+						
+						String italicLine=line.substring(analyzer.textStart,cotinued+1);
+						if(parseAll){
+							String key=analyzer.getValueKey();
+							analyzer.incrementIndex();
+							
+							String text=italicLine.replace("*", "");
+							result.addTemplate(key, text);
+							
+							newLine+="*"+"${"+key+"}"+"*";
+						}else{
+							newLine+=italicLine;
+						}
+						
 						
 					}else{
 						//in italic ignore
@@ -190,7 +204,21 @@ public void setLogger(GWTLogger logger) {
 						}
 						int length=cotinued-j+1;
 						if(length>1){
-						newLine+=line.substring(analyzer.textStart,cotinued+1);
+						String boldLine=line.substring(analyzer.textStart,cotinued+1);
+						if(parseAll){
+							String key=analyzer.getValueKey();
+							analyzer.incrementIndex();
+							
+							String text=boldLine.replace("*", "");
+							result.addTemplate(key, text);
+							
+							newLine+="**"+"${"+key+"}"+"**";
+						}else{
+							newLine+=boldLine;
+						}
+						
+							
+						
 						j=cotinued;
 						analyzer.bold=false;
 						}else{
@@ -369,8 +397,10 @@ public void setLogger(GWTLogger logger) {
 						//int end=line.indexOf(")");//bug version to test catch error
 						int end=line.indexOf(")",connection);
 						if(end!=-1){//find link
+							
 							//make key
 							String safeText=analyzer.text;
+							LogUtils.log("safe-text:"+safeText);
 							if(!safeText.isEmpty()){
 								//do template
 								String key=analyzer.getValueKey();
@@ -385,7 +415,23 @@ public void setLogger(GWTLogger logger) {
 								analyzer.text="";
 							}
 							//skip links
-							newLine+=line.substring(j,end+1);
+							String linkText=line.substring(j,end+1);
+							if(parseAll){
+								String key=analyzer.getValueKey();
+								analyzer.incrementIndex();
+								
+								int startLink=linkText.indexOf("[");
+								int endLink=linkText.indexOf("](");
+								
+								String text=linkText.substring(startLink+1,endLink);
+								result.addTemplate(key, text);
+								
+								newLine+=linkText.substring(0,startLink+1)+"${"+key+"}"+linkText.substring(endLink);
+								
+							}else{
+								newLine+=linkText;
+							}
+							
 							j=end;//auto increment
 							findLink=true;
 						}
@@ -474,7 +520,7 @@ public void setLogger(GWTLogger logger) {
 			
 		}
 		
-		if(parseHeader){
+		if(parseAll){
 			for(int i=0;i<passStrings.size();i++){
 				String line=passStrings.get(i);
 				
