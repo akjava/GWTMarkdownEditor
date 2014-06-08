@@ -180,9 +180,10 @@ public void setLogger(GWTLogger logger) {
 							analyzer.incrementIndex();
 							
 							String text=italicLine.replace("*", "");
-							result.addTemplate(key, text);
 							
-							newLine+="*"+"${"+key+"}"+"*";
+							
+							newLine+=addNewLine("*","*",key,text);
+							result.addTemplate(key, fixSpaceText(text));
 						}else{
 							newLine+=italicLine;
 						}
@@ -210,9 +211,9 @@ public void setLogger(GWTLogger logger) {
 							analyzer.incrementIndex();
 							
 							String text=boldLine.replace("*", "");
-							result.addTemplate(key, text);
 							
-							newLine+="**"+"${"+key+"}"+"**";
+							newLine+=addNewLine("**","**",key,text);
+							result.addTemplate(key, fixSpaceText(text));
 						}else{
 							newLine+=boldLine;
 						}
@@ -279,11 +280,12 @@ public void setLogger(GWTLogger logger) {
 						analyzer.incrementIndex();
 						
 						String value=safeText;
-						String converted="";
-						result.addTemplate(key, value);
-						converted="${"+key+"}";
 						
-						newLine+=converted;
+						
+						newLine+=addNewLine("","",key,value);
+						result.addTemplate(key, fixSpaceText(value));
+						
+						
 						analyzer.text="";
 					}
 					
@@ -400,7 +402,7 @@ public void setLogger(GWTLogger logger) {
 							
 							//make key
 							String safeText=analyzer.text;
-							LogUtils.log("safe-text:"+safeText);
+							//LogUtils.log("safe-text:"+safeText);
 							if(!safeText.isEmpty()){
 								//do template
 								String key=analyzer.getValueKey();
@@ -424,9 +426,12 @@ public void setLogger(GWTLogger logger) {
 								int endLink=linkText.indexOf("](");
 								
 								String text=linkText.substring(startLink+1,endLink);
-								result.addTemplate(key, text);
 								
-								newLine+=linkText.substring(0,startLink+1)+"${"+key+"}"+linkText.substring(endLink);
+								
+								
+								
+								newLine+=addNewLine(linkText.substring(0,startLink+1),linkText.substring(endLink),key,text);
+								result.addTemplate(key, fixSpaceText(text));
 								
 							}else{
 								newLine+=linkText;
@@ -442,7 +447,7 @@ public void setLogger(GWTLogger logger) {
 					}
 				}else if(ch=='!'){
 					boolean findLink=false;
-					if(j<line.length()-1 && line.charAt(j+1)=='['){
+					if(j<line.length()-1 && line.charAt(j+1)=='['){//TODO support alt
 					int connection=line.indexOf("](",j+1);
 					if(connection!=-1){
 						int end=line.indexOf(")");
@@ -484,6 +489,7 @@ public void setLogger(GWTLogger logger) {
 			
 			
 			if(analyzer.italic){
+				
 				newLine+=line.substring(analyzer.textStart);
 				passStrings.add(newLine);
 			}else if(analyzer.bold){
@@ -504,11 +510,16 @@ public void setLogger(GWTLogger logger) {
 					analyzer.incrementIndex();
 					
 					String value=safeText;
+					/*
 					String converted="";
 					result.addTemplate(key, value);
 					converted="${"+key+"}";
 					
 					newLine+=converted;
+					*/
+					
+					newLine+=addNewLine("","",key,value);
+					result.addTemplate(key, fixSpaceText(value));
 				}
 				
 				
@@ -547,6 +558,22 @@ public void setLogger(GWTLogger logger) {
 		result.setExtractedMarkdown(Joiner.on("\n").join(passStrings));
 		
 		return result;
+	}
+	private String addNewLine(String before,String after,String keyName,String text){
+		
+		if(text.startsWith(" ")){
+			before+=" ";
+		}
+		if(text.endsWith(" ")){
+			after=" "+after;
+		}
+		//TODO accurate space
+		
+		return before+"${"+keyName+"}"+after;
+	}
+	
+	private String fixSpaceText(String text){
+		return text.trim();
 	}
 	
 	private class Analyzer{
