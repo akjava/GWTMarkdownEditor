@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.akjava.gwt.markdowneditor.client.MarkdownPredicates.StartWithTitle1OrTitle2Predicate;
 import com.akjava.lib.common.utils.CSVUtils;
 import com.akjava.lib.common.utils.StringUtils;
 import com.akjava.lib.common.utils.log.GWTLogger;
@@ -28,6 +29,9 @@ public void setLogger(GWTLogger logger) {
 
 	public static boolean debug;
 	public ExtractedResult extract(String markdown){
+		return extract(markdown,false);
+	}
+	public ExtractedResult extract(String markdown,boolean parseHeader){
 		String[] lines=CSVUtils.splitLinesWithGuava(markdown).toArray(new String[0]);
 		
 		ExtractedResult result=new ExtractedResult();
@@ -469,6 +473,30 @@ public void setLogger(GWTLogger logger) {
 			
 			
 		}
+		
+		if(parseHeader){
+			for(int i=0;i<passStrings.size();i++){
+				String line=passStrings.get(i);
+				
+				//prev line is title;
+				if(i!=0 && MarkdownPredicates.getStartWithTitle1OrTitle2Predicate().apply(line)){
+					String head=passStrings.get(i-1);
+					String key=analyzer.getValueKey();
+					passStrings.set(i-1, "${"+key+"}");
+					result.addTemplate(key, head);
+					analyzer.incrementIndex();
+				}else if(MarkdownPredicates.getStartWithTitleLinePredicate().apply(line)){
+					int index=line.lastIndexOf("#");
+					if(index!=-1){
+						String key=analyzer.getValueKey();
+						passStrings.set(i,line.substring(0,index+1)+"${"+key+"}");
+						result.addTemplate(key, line.substring(index+1));
+						analyzer.incrementIndex();
+					}
+				}
+			}
+		}
+		
 		
 		result.setExtractedMarkdown(Joiner.on("\n").join(passStrings));
 		
