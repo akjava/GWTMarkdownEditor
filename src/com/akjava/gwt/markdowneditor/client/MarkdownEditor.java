@@ -456,9 +456,18 @@ public class MarkdownEditor extends SplitLayoutPanel {
 				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
 					String selected=selection.getSelection();
 					if(selected.endsWith(".jpg")||selected.endsWith(".png")){
-						String newText="!["+""+"]"+"("+selected+")";
+						List<String> newLines=new ArrayList<String>();
+						String[] lines=selected.split("\n");
 						
-						selection.replace(newText);
+						for(String line:lines){
+							if(line.isEmpty()){
+								continue;
+							}
+						String newText="!["+""+"]"+"("+line+")";
+						newLines.add(newText);
+						}
+						
+						selection.replace(Joiner.on("\n\n").join(newLines));
 						onTextAreaUpdate();
 					}else{
 					String url=Window.prompt("Image URL", "");
@@ -917,6 +926,8 @@ public class MarkdownEditor extends SplitLayoutPanel {
 				//HTML imgHtml=htmlMap.get(ht);
 				Map<String,String> attr=TagUtil.getAttribute(tag);
 				String src=attr.get("src");
+				//we don't need care alt ,this is just preview
+				
 				if(src!=null){
 					
 					
@@ -932,6 +943,7 @@ public class MarkdownEditor extends SplitLayoutPanel {
 					
 					if(img==null){
 						img=new Image(src);
+						
 						imageMap.put(src, img);
 					}
 					
@@ -971,9 +983,25 @@ public class MarkdownEditor extends SplitLayoutPanel {
 				html=html.substring(index);//invalid text
 				break;
 			}else{
+				
+				
+				//check before
+				String before=sub.substring(Math.max(0, sub.length()-"<p>".length()));
+				String after=html.substring(end+1,Math.min(end+1+"</p>".length(),html.length()));
+				
+				if(!before.equals("<p>")){
+					htmls.add("<b>Insert Line separator before image<b>");
+				}
+				
+				
 				String img=html.substring(index,end+1);
 				htmls.add(img);
 				html=html.substring(end+1);
+				
+				if(!after.equals("</p>")){
+					htmls.add("<b>Insert Line separator after image<b>");
+				}
+				
 			}
 			
 			index=html.indexOf("<img ");
