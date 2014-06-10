@@ -2,9 +2,9 @@ package com.akjava.gwt.markdowneditor.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.akjava.gwt.lib.client.GWTHTMLUtils;
 import com.akjava.gwt.lib.client.LogUtils;
@@ -526,8 +526,33 @@ public class MarkdownEditor extends SplitLayoutPanel {
 				}
 				}
 		});
+		
+		
 		numberListBt.setTitle("Convert to Number List");
 		button1Panel.add(numberListBt);
+		
+		
+		
+		Button nBt=new Button("N",new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				for(TextSelection selection:TextSelection.createTextSelection(textArea).asSet()){
+					if(!selection.getCurrentLine().getSelection().endsWith("  ")){
+						String line=selection.getCurrentLine().getLineEndRemovedSelection();
+						if(!line.endsWith("  ")){
+							selection.getCurrentLine().replaceInLine(line+"  ");
+						}
+						onTextAreaUpdate();
+					}
+					
+				}
+				}
+		});
+		nBt.setTitle("two space line");
+		button1Panel.add(nBt);
+		
+		
 		
 		Button tableBt=new Button("Tab2Table",new ClickHandler() {
 			
@@ -698,6 +723,8 @@ public class MarkdownEditor extends SplitLayoutPanel {
 	
 
 
+
+
 	public void clearHistory(){
 		lastHistory=null;
 		textHistory.clear();
@@ -782,7 +809,7 @@ public class MarkdownEditor extends SplitLayoutPanel {
 		}
 	}
 	
-	private static void insertBetweenSelectionText(TextSelection selection,String header,String footer){
+	public static void insertBetweenSelectionText(TextSelection selection,String header,String footer){
     	String newText=header+selection.getSelection()+footer;
 		selection.replace(newText);
     	
