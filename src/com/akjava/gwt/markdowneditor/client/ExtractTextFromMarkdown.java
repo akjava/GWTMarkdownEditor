@@ -240,8 +240,23 @@ public void setLogger(GWTLogger logger) {
 						}
 						int length=cotinued-j+1;
 						if(length>1){
-						newLine+=line.substring(analyzer.textStart,cotinued+1);
+							String strikeText=line.substring(analyzer.textStart,cotinued+1);
+							if(parseAll){
+								String key=analyzer.getValueKey();
+								analyzer.incrementIndex();
+								
+								String text=strikeText.replace("~", "");
+								
+								newLine+=addNewLine("~~","~~",key,text);
+								result.addTemplate(key, fixSpaceText(text));
+							}else{
+								newLine+=strikeText;
+							}
+							
+						
 						j=cotinued;
+						
+						
 						analyzer.strike=false;
 						}else{
 							if(debug)System.out.println("strike:"+line.substring(analyzer.textStart, j+1));
@@ -261,7 +276,19 @@ public void setLogger(GWTLogger logger) {
 						}
 						int length=cotinued-j+1;
 						if(length>0){
-						newLine+=line.substring(analyzer.textStart,cotinued+1);
+							String codeText=line.substring(analyzer.textStart,cotinued+1);
+							if(parseAll){
+								String key=analyzer.getValueKey();
+								analyzer.incrementIndex();
+								
+								String text=codeText.replace("`", "");
+								
+								newLine+=addNewLine("`","`",key,text);
+								result.addTemplate(key, fixSpaceText(text));
+							}else{
+								newLine+=codeText;
+							}
+						
 						j=cotinued;
 						analyzer.textcode=false;
 						}else{
